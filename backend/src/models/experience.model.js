@@ -2,7 +2,6 @@ import mongoose, { Schema } from "mongoose";
 
 const { ObjectId } = mongoose.Schema.Types;
 
-
 const experienceSchema = Schema({
     userId:{
         type: ObjectId,
@@ -27,6 +26,11 @@ const experienceSchema = Schema({
     description: {
         type: String,
         required: String
+    },
+    status:{
+        type: Boolean,
+        enum:[true, false],
+        default: true
     }
 },
     { timestamps: true }

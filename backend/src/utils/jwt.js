@@ -6,12 +6,11 @@ dotenv.config({
 })
 
 const securityKey = process.env.securityKey;
-const saltRound = 15;
 
 const jwtToken = async (user) => {
     try {
-        const accessToken = await jwt.sign(user, saltRound, securityKey, { expiresIn: "1h" });
-        const refreshToken = await jwt.sign(user. saltRound, securityKey, {expiresIn: "1d"});
+        const accessToken = await jwt.sign(user, securityKey, { expiresIn: "1h" });
+        const refreshToken = await jwt.sign(user, securityKey, {expiresIn: "1d"});
 
         return {accessToken, refreshToken}
     }

@@ -7,7 +7,7 @@ const projectSchema = Schema({
         type: ObjectId,
         ref: "user"
     },
-    pejectName: {
+    projectName: {
         type: String,
         required: true
     },
@@ -38,21 +38,26 @@ const projectSchema = Schema({
     section: [
         {
             image: {
-                type: Stirng
+                type: String
             },
             description: {
-                type: Stirng
+                type: String
             }
         }
     ],
     socialMedia: [{
-        name: { Stirng },
+        name: { String },
         link: { String }
     }],
     status: {
         type: Boolean,
         enum: [true, false],
         default: true
+    },
+    faviourate:{
+        type: Boolean,
+        enum:[true, false],
+        default: false
     }
 },
     { timestamps: true }

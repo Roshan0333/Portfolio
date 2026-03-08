@@ -11,7 +11,7 @@ const educationSchema = Schema({
         type: String,
         required: true
     },
-    class: {
+    standed: {
         type: String,
         required: true
     },
@@ -21,10 +21,15 @@ const educationSchema = Schema({
     },
     subject: {
         type: String
+    },
+    description:{
+        type: String
     }
 },
     { timestamps: true }
 );
+
+educationSchema.index({userId:1});
 
 const educationModel = mongoose.model("education", educationSchema);
 

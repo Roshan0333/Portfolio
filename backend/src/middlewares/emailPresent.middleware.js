@@ -11,6 +11,8 @@ const emailPresent = async (req, res, next) => {
             return res.status(404).json(new ApiError(404, "Email is not found."));
         }
 
+        req.user = isEmail
+
         return next();
     }
     catch(err){

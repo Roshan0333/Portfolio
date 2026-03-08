@@ -29,7 +29,7 @@ const profileSchema = Schema({
         type: String
     },
     skill:[String],
-    induction: {
+    introduction: {
         type: String
     },
     dob: {
@@ -46,12 +46,10 @@ const profileSchema = Schema({
             name: {
                 type: String,
                 unique: true,
-                required: true
             },
             link: {
                 type: String,
                 unique: true,
-                required: true
             }
         }
     ]
