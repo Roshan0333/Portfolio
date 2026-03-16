@@ -1,5 +1,5 @@
-import authModel from "../models/auth.model";
-import ApiError from "../utils/api-errors";
+import authModel from "../models/auth.model.js";
+import ApiError from "../utils/api-errors.js";
 
 const emailPresent = async (req, res, next) => {
     try{

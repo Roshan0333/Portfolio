@@ -1,25 +1,26 @@
 import certificateModel from "../models/certificate.model.js";
-import {cloudinary} from "../config/cloudinary.config.js";
+import { cloudinary } from "../config/cloudinary.config.js";
 import ApiError from "../utils/api-errors.js";
 import ApiResponse from "../utils/api-response.js";
+import client from "../config/redis.config.js"
 
 const addCertificate = async (req, res) => {
-    try{
-        const {_id} = req.user;
+    try {
+        const { _id } = req.user;
 
-        const {name, date, status, description} = req.body;
+        const { name, date, status, description } = req.body;
 
-        if(!name || !date || !status){
+        if (!name || !date || !status) {
             return res.status(400).json(new ApiError(400, "All Field is Required"));
         }
 
-        if(!req.file){
+        if (!req.file) {
             return res.status(400).json(new ApiError(400, "Certitifcate Image is Required"));
         }
 
         const imageUploaded = await cloudinary.uploader.upload(req.file);
 
-        const image =imageUploaded.secure_url;
+        const image = imageUploaded.secure_url;
 
         const certificateDetail = certificateModel({
             userId: _id,
@@ -32,22 +33,24 @@ const addCertificate = async (req, res) => {
 
         await certificateDetail.save();
 
-        if(!certificateDetail){
+        if (!certificateDetail) {
             return res.status(400).json(new ApiError(400, "Failed To Add New Certificate."));
         }
 
+        await client.del("Certificate")
+
         return res.status(200).json(new ApiResponse(200, certificateDetail, "Certificate Add Successfully"));
     }
-    catch(err){
-        return res.status(500).json(new ApiError(500, err.message, [{message: err.message, name: err.name}]));
+    catch (err) {
+        return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));
     }
 }
 
 const updateCertidicate = async (req, res) => {
-    try{
-        const {certificateId, status} = req.body;
+    try {
+        const { certificateId, status } = req.body;
 
-        if(!certificateId){
+        if (!certificateId) {
             return res.status(404).json(new ApiError(404, "CertificateId is Reqiuired"));
         }
 
@@ -58,33 +61,60 @@ const updateCertidicate = async (req, res) => {
             }
         );
 
-        if(!certificateDetail){
+        if (!certificateDetail) {
             return res.status(400).json(new ApiError(400, "Certificate Updating is Failed"));
         }
 
+        await client.del("Certificate")
+
         return res.status(200).json(new ApiResponse(200, certificateDetail, "Certificate Detail Updated Successfully"));
     }
-    catch(err){
-        return res.status(500).json(new ApiError(500, err.message, [{message: err.message, name: err.name}]));
+    catch (err) {
+        return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));
     }
 }
 
 const deleteCertificate = async (req, res) => {
-    try{
-        const {certificateId} = req.body;
+    try {
+        const { certificateId } = req.body;
 
-        if(!certificateId){
+        if (!certificateId) {
             return res.status(404).json(new ApiError(404, "Certificate Id is Required"));
         }
 
         await certificateModel.findByIdAndDelete(certificateId);
 
+        await client.del("Certificate")
+
         return res.status(200).json(new ApiResponse(200, null, "Certificate Remove Successfully"));
     }
-    catch(err){
-        return res.status(500).json(new ApiError(500, err.message, [{message: err.message, name: err.name}]));
+    catch (err) {
+        return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));
+    }
+}
+
+const getCertificate = async (req, res) => {
+    try {
+        const redisCertificateDetails = await client.get("Certificate");
+
+        if (redisCertificateDetails) {
+            return res.status(200).json(new ApiResponse(200, JSON.parse(redisCertificateDetails), "Successfully"));
+        }
+
+        const certificateDetails = await certificateModel.find();
+
+        if (certificateDetails.length === 0) {
+            return res.status(404).json(new ApiError(404, "Not Certificate Details"));
+        }
+
+        await client.set("Certificate", JSON.stringify(certificateDetails));
+
+        return res.status(200).json(new ApiResponse(200, certificateDetails, "Successfully"));
+    }
+    catch (err) {
+        return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));
     }
 }
 
 
-export {addCertificate, updateCertidicate, deleteCertificate};
+export { addCertificate, updateCertidicate, deleteCertificate, getCertificate };

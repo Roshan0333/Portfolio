@@ -2,6 +2,21 @@ import projectModel from "../models/project.model.js";
 import { cloudinary } from "../config/cloudinary.config.js";
 import ApiError from "../utils/api-errors.js";
 import ApiResponse from "../utils/api-response.js";
+import client from "../config/redis.config.js";
+
+const deleteProjectCacheByVersion = async (version) => {
+    const keys = [];
+
+    for await (const key of client.scanIterator({
+        MATCH: `projects:v${version}:*`
+    })) {
+        keys.push(key);
+    }
+
+    if (keys.length > 0) {
+        await client.del(keys);
+    }
+};
 
 const addProject = async (req, res) => {
     try {
@@ -67,6 +82,12 @@ const addProject = async (req, res) => {
 
         await projectDetail.save();
 
+        const currentVersion = await client.get("projects:version") || 1;
+
+        await deleteProjectCacheByVersion(currentVersion);
+
+        await client.incr("projects:version");
+
         return res.status(200).json(new ApiResponse(200, projectDetail, "Project Add Successfully"));
 
 
@@ -91,11 +112,17 @@ const updateProject = async (req, res) => {
                 faviourate
             });
 
-            if(!projectDetail){
-                return res.status(400).json(new ApiError(400, "Failed to Update Project Status."));
-            }
+        if (!projectDetail) {
+            return res.status(400).json(new ApiError(400, "Failed to Update Project Status."));
+        }
 
-            return res.status(200).json(new ApiResponse(200, projectDetail, "Project Update Successfully"));
+        const currentVersion = await client.get("projects:version")||1;
+
+        await deleteProjectCacheByVersion(currentVersion);
+
+        await client.incr("projects:version");
+
+        return res.status(200).json(new ApiResponse(200, projectDetail, "Project Update Successfully"));
     }
     catch (err) {
         return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));
@@ -103,20 +130,82 @@ const updateProject = async (req, res) => {
 }
 
 const deleteProject = async (req, res) => {
-    try{
-        const {projectId} = req.body;
+    try {
+        const { projectId } = req.body;
 
-        if(!projectId){
+        if (!projectId) {
             return res.status(404).json(new ApiError(404, "Project Id is Required"));
         }
 
         await projectModel.findByIdAndDelete(projectId);
 
-        return res.status(200).json(new ApiResponse(200, null, [{message: err.message, name: err.name}]));
+        const currentVersion = await client.get("projects:version")||1;
+
+        await deleteProjectCacheByVersion(currentVersion);
+
+        await client.incr("projects:version");
+
+        return res.status(200).json(new ApiResponse(200, null, [{ message: err.message, name: err.name }]));
     }
-    catch(err){
-        return res.status(500).json(new ApiError(500, err.message, [{message: err.message, name: err.name}]));
+    catch (err) {
+        return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));
     }
 }
 
-export {addProject, updateProject, deleteProject};
+const getProject = async (req, res) => {
+    try {
+        let { page = 1, limit = 10 } = req.query;
+
+        page = parseInt(page);
+        limit = parseInt(limit);
+
+        const version = await client.get("projects:version") || 1;
+        const cacheKey = `projects:v${version}:page:${page}`;
+        const redisProjectDetails = await client.get(cacheKey);
+
+        if (redisProjectDetails) {
+            return res.status(200).json(new ApiResponse(200, JSON.parse(redisProjectDetails), "Successfully"));
+        }
+
+        const skip = (page - 1) * limit;
+
+        const projectDetails = await projectModel.find()
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        if (projectDetails.length === 0) {
+            return res.status(404).json(new ApiError(404, "No Project Found"));
+        }
+
+        await client.set(cacheKey, JSON.stringify(projectDetails));
+
+        return res.status(200).json(new ApiResponse(200, projectDetails, "Successfully"));
+    }
+    catch (err) {
+        return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));
+    }
+}
+
+const getProjectById = async(req, res) => {
+    try{
+        const {projectId} = req.params;
+
+        if(!projectId){
+            return res.status(400).json(new ApiError(400, "Project Id is Required"));
+        }
+
+        const projectDetail = await projectModel.findById(projectId);
+
+        if(!projectDetail){
+            return res.status(404).json(new ApiError(404, "Project not found"));
+        }
+
+        return res.status(200).json(new ApiResponse(200, projectDetail, "Successfully"));
+    }
+    catch(err){
+        return res.status(500).json(new ApiError(500, err.message, [{message: err.message, name: err.name}]))
+    }
+}
+
+export { addProject, updateProject, deleteProject, getProject, getProjectById };

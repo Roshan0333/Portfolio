@@ -1,4 +1,4 @@
-import jwtToken from "./jwt";
+import jwtToken from "./jwt.js";
 import ApiError from "./api-errors.js";
 
 const userCookies = async (res, user) => {

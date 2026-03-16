@@ -4,6 +4,7 @@ import ApiError from "../utils/api-errors.js";
 import ApiResponse from "../utils/api-response.js";
 import { passwordDecrypt, passwordEncrypt } from '../utils/bcrypt.js';
 import { brevo } from "../config/brevo.config.js";
+import client from "../config/redis.config.js";
 
 const signup = async (req, res) => {
     try {
@@ -25,6 +26,8 @@ const signup = async (req, res) => {
         userDetail.password = undefined
 
         await userCookies(res, userDetail);
+
+        await client.set("userEmail", email, {EX: 20});
 
         return res.status(200).json(new ApiResponse(200, userDetail, "Successfully"));
     }
@@ -53,7 +56,7 @@ const login = async (req, res) => {
 
         await userCookies(res, userDetail);
 
-        return res.status(200).json(new ApiResponse(200, null, "Success Granted"));
+        return res.status(200).json(new ApiResponse(200, userDetail, "Success Granted"));
 
     }
     catch (err) {

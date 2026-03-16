@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import userCookies from "../utils/userCookies";
-import ApiError from "../utils/api-errors";
+import userCookies from "../utils/userCookies.js";
+import ApiError from "../utils/api-errors.js";
 
 const securityKey = process.env.securityKey;
 

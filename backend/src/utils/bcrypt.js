@@ -16,7 +16,7 @@ const passwordEncrypt = async (password) => {
 
 const passwordDecrypt = async (password, hashPassword) => {
     try{
-        passwordVerify = await bcrypt.compare(password, hashPassword);
+        const passwordVerify = await bcrypt.compare(password, hashPassword);
 
         return passwordVerify;
     }
