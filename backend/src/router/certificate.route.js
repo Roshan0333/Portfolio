@@ -7,6 +7,6 @@ const router = Router();
 router.route("/add").post(requiredToLogin, addCertificate);
 router.route("/update").patch(requiredToLogin, updateCertidicate);
 router.route("/delete").delete(requiredToLogin, deleteCertificate);
-route.route("/get").get(getCertificate);
+router.route("/get").get(getCertificate);
 
 export default router;

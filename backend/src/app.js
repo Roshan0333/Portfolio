@@ -9,6 +9,10 @@ import projectRoutes from "./router/project.route.js";
 import experienceRoutes from "./router/experience.route.js";
 import certificationRoutes from "./router/certificate.route.js";
 
+import inggest from "./config/inngest.config.js";;
+import {serve} from 'inngest/express';
+import {portfolioAgent} from "./controllers/portfolioAgent.controllers.js";
+
 const app = express();
 
 app.use(cors(
@@ -33,6 +37,11 @@ app.use("/api/v1/portfolio/education", educationRoutes);
 app.use("/api/v1/portfolio/project", projectRoutes);
 app.use("/api/v1/portfolio/experience", experienceRoutes);
 app.use("/api/v1/portfolio/certficate", certificationRoutes);
+
+app.use("/api/v1/agent", serve({
+    client: inggest,
+    functions:[portfolioAgent]
+}))
 
 
 export default app;
