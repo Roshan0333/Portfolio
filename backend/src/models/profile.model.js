@@ -28,6 +28,9 @@ const profileSchema = Schema({
     profession: {
         type: String
     },
+    resume:{
+        type: String
+    },
     skill:[String],
     introduction: {
         type: String

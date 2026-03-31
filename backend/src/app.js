@@ -8,10 +8,13 @@ import educationRoutes from "./router/education.route.js";
 import projectRoutes from "./router/project.route.js";
 import experienceRoutes from "./router/experience.route.js";
 import certificationRoutes from "./router/certificate.route.js";
+import inquireRoutes from "./router/inquire.route.js";
 
-import inggest from "./config/inngest.config.js";;
+import inngest from "./agent/config/inngest.config.js";;
 import {serve} from 'inngest/express';
-import {portfolioAgent} from "./controllers/portfolioAgent.controllers.js";
+import {portfolioAgent} from "./agent/controllers/portfolioAgent.controllers.js";
+
+dotenv.config();
 
 const app = express();
 
@@ -26,8 +29,6 @@ app.use(cors(
 
 app.use(cookiesParser());
 
-dotenv.config();
-
 app.use(express.json())
 
 
@@ -37,9 +38,10 @@ app.use("/api/v1/portfolio/education", educationRoutes);
 app.use("/api/v1/portfolio/project", projectRoutes);
 app.use("/api/v1/portfolio/experience", experienceRoutes);
 app.use("/api/v1/portfolio/certficate", certificationRoutes);
+app.use("/api/v1/portfolio/inquire", inquireRoutes);
 
 app.use("/api/v1/agent", serve({
-    client: inggest,
+    client: inngest,
     functions:[portfolioAgent]
 }))
 
