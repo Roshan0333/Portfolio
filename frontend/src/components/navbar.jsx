@@ -4,6 +4,7 @@ import cross from "../assets/cross.webp";
 import portfolioAgent from "../assets/agent-logo.webp";
 import { FaBars } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion"
 
 function Navbar() {
 
@@ -12,23 +13,23 @@ function Navbar() {
     const navListArray = [
         {
             name: "Home",
-            path:"/"
+            path: "/"
         },
         {
             name: "Experience",
-            path:"/experience"
+            path: "/experience"
         },
         {
             name: "Education",
-            path:"/education"
+            path: "/education"
         },
         {
             name: "Project",
-            path:"/project"
+            path: "/project"
         },
         {
             name: "Certificate",
-            path:"/certificate"
+            path: "/certificate"
         },
     ]
 
@@ -38,14 +39,44 @@ function Navbar() {
 
     return (
         <div className="bg-white mx-3 mt-3 h-16 flex items-center justify-between rounded-full md:mx-10 sm:m-3 py-2">
-            <img src={logo} className="w-20 h-12 m-1 rounded-full" />
+            <motion.div
+                className="relative w-20 h-12 overflow-hidden rounded-full">
+                <img
+                    src={logo}
+                    className="w-20 h-12 m-1 rounded-full"
+                />
+                <motion.div
+                    className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
+                    animate={{ left: ["-100%", "100%"] }}
+                    transition={{
+                        repeat: Infinity,
+                        duration: 2,
+                        ease: "easeInOut",
+                        repeatDelay: 2
+                    }}
+                />
+            </motion.div>
             <div className="flex-1 flex justify-end md:justify-center">
                 <div className="md:hidden flex items-center">
-                    <img src={portfolioAgent} className="w-10 h-10 mr-3 rounded-full"/>
-                    <div className="flex flex-col justify-between w-6 h-5 cursor-pointer mr-3" onClick={handleMenu}>
-                        {!isOpen && <FaBars size={25} color="black"/>}
+                    {/* <img src={portfolioAgent} className="w-10 h-10 mr-3 rounded-full" /> */}
+                    <motion.div className="relative w-10 h-10 mr-3 overflow-hidden rounded-full">
+                        <img src={portfolioAgent} className="rounded-full" />
 
-                        {isOpen && <img src={cross}/>}
+                        <motion.div
+                        className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
+                        animate={{left:["-100%", "100%"]}}
+                        transition={{
+                            repeat: Infinity,
+                            ease:"easeInOut",
+                            duration:2,
+                            repeatDelay:2
+                        }}
+                        />
+                    </motion.div>
+                    <div className="flex flex-col justify-between w-6 h-5 cursor-pointer mr-3" onClick={handleMenu}>
+                        {!isOpen && <FaBars size={25} color="black" />}
+
+                        {isOpen && <img src={cross} />}
                     </div>
 
                     {isOpen &&
@@ -59,13 +90,29 @@ function Navbar() {
 
                 <div className="hidden md:flex items-center gap-2 justify-center mr-3">
                     {navListArray.map((item, index) => {
-                        return <Link to={item.path} className="text-black mr-1 cursor-pointer hover:bg-black hover:text-white rounded-full p-2" key={index} >{item.name}</Link>
+                        return <Link to={item.path} className="text-black mr-1 cursor-pointer text-[15px] hover:bg-black hover:text-white rounded-full p-2" key={index} >{item.name}</Link>
                     })}
                 </div>
 
             </div>
 
-            <img src={portfolioAgent} className="hidden md:flex w-15 h-12 m-1 mr-4 rounded-full cursor-pointer" />
+            <motion.div className=" hidden md:flex relative w-12 h-12 mr-4 overflow-hidden rounded-full">
+                <img
+                    src={portfolioAgent}
+                    className="m-1 mr-4 rounded-full cursor-pointer"
+                />
+
+                <motion.div
+                    className="absolute top-0 left-[-120%] w-full h-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
+                    animate={{ left: ["-120%", "120%"] }}
+                    transition={{
+                        duration: 2,
+                        ease: "easeInOut",
+                        repeat: Infinity,
+                        repeatDelay: 2
+                    }}
+                />
+            </motion.div>
         </div>
     )
 }
