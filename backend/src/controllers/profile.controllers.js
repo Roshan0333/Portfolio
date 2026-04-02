@@ -9,7 +9,7 @@ const createProfile = async (req, res) => {
     try {
         const { _id } = req.user;
 
-        const { name, email, contact, profession, skill, introduction, dob, address, socialMediaLink } = req.body;
+        const { name, email, contact, profession, introduction, dob, address, socialMediaLink } = req.body;
 
         if (!name || !contact || !profession || !skill) {
             return res.status(400).json(new ApiError(400, "Name, Contact, Professional and Skill is Required."));
@@ -18,7 +18,7 @@ const createProfile = async (req, res) => {
         let profileImage;
 
         if (req.file) {
-            profileImage = await cloudinary.uploader.upload(req.file, { folder: "PortFolio" });
+            profileImage = (await cloudinary.uploader.upload(req.file, { folder: "PortFolio" })).secure_url;
         }
 
         const userDetail = profileModel({
@@ -28,7 +28,6 @@ const createProfile = async (req, res) => {
             email,
             contact,
             profession,
-            skill,
             introduction,
             dob,
             address,
@@ -107,6 +106,67 @@ const getProfile = async (req, res) => {
     }
 }
 
+const addSkills = async (req, res) => {
+    try{
+        const {_id} = req.user;
+
+        const {skillArray, category} = req.body;
+
+        const totalSkills = skillArray.flat().length;
+
+        if(!req.files || req.files.length === 0){
+            return res.status(400).json(new ApiError(400, "Skill Icon or Image is Required."));
+        }
+
+        if(skillArray.length !== category.length | req.files.length !== totalSkills){
+            return res.status(400).json(new ApiError(400, "At least one skill for each category and Number of files must match number of skills"));
+        }
+
+        const skillList = [];
+
+        let num = 0;
+
+        for(let i = 0; i<skillArray.length; i++){
+
+            let items =[];
+
+            for(let j=0; j<skillArray[i].length; j++){
+                const icon = (await cloudinary.uploader.upload(req.files[num].path, {folder: "Skills"})).secure_url;
+                const name = skillArray[i][j];
+                items.push({
+                    name: name,
+                    icon: icon
+                })
+
+                num++;
+            }
+
+            skillList.push(
+                {
+                    category:category[i],
+                    items:items
+                }
+            )
+        }
+
+        const profileDetails = await profileModel.findOneAndUpdate(
+            {userId:_id},
+            {skill: skillList},
+            { new: true }
+        );
+
+        if(!profileDetails){
+            return res.status(400).json(new ApiError(400, "Profile Updatation Failed"));
+        }
+
+        return res.status(200).json(new ApiResponse(200, profileDetails, "Successful"))
+
+    }
+    catch(err){
+        return res.status(500).json(new ApiError(500, err.message, [{message: err.message, name: err.name}]));
+    }
+}
+
 const uploadResume = async (req, res) => {
     try {
 
@@ -154,4 +214,4 @@ const uploadResume = async (req, res) => {
     }
 }
 
-export { createProfile, updateProfile, getProfile, uploadResume };
+export { createProfile, updateProfile, getProfile, uploadResume, addSkills };

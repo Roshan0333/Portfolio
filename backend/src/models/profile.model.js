@@ -28,10 +28,22 @@ const profileSchema = Schema({
     profession: {
         type: String
     },
-    resume:{
+    resume: {
         type: String
     },
-    skill:[String],
+    skill: [
+        {
+            category: {
+                type: String,
+            },
+            items: [
+                {
+                    name: String,
+                    icon: String
+                }
+            ]
+        }
+    ],
     introduction: {
         type: String
     },
@@ -60,7 +72,7 @@ const profileSchema = Schema({
     { timestamps: true }
 );
 
-profileSchema.index({userId:-1})
+profileSchema.index({ userId: -1 })
 
 const profileModel = mongoose.model("profile", profileSchema);
 

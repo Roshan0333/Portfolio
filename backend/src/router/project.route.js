@@ -1,10 +1,15 @@
 import {Router} from "express";
 import {addProject, updateProject, deleteProject, getProject, getProjectById} from "../controllers/project.controllers.js";
 import requiredToLogin from "../middlewares/requiredToLogin.middleware.js";
+import multer from "multer"
 
 const router = Router();
 
-router.route("/add").post(requiredToLogin, addProject);
+const storage = multer.diskStorage();
+
+const upload = multer({storage})
+
+router.route("/add").post(requiredToLogin, upload.array("Project"), addProject);
 router.route("/update").patch(requiredToLogin, updateProject);
 router.route("/delete").delete(requiredToLogin, deleteProject);
 router.route("/get").get(getProject);
