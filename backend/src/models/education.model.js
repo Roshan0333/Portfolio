@@ -19,17 +19,25 @@ const educationSchema = Schema({
         type: String,
         required: true
     },
+    start: {
+        type: String,
+        required: true
+    },
+    end: {
+        type: String,
+        required: true
+    },
     subject: {
         type: String
     },
-    description:{
+    description: {
         type: String
     }
 },
     { timestamps: true }
 );
 
-educationSchema.index({userId:1});
+educationSchema.index({ userId: 1 });
 
 const educationModel = mongoose.model("education", educationSchema);
 

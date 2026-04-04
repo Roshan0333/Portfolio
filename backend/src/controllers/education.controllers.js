@@ -7,9 +7,9 @@ const addEducation = async (req, res) => {
     try {
         const { _id } = req.user;
 
-        const { schoolName, standed, grade, subject, description } = req.body;
+        const { schoolName, standed, grade, subject, description, start, end } = req.body;
 
-        if (!schoolName || !standed || !grade || !subject || !description) {
+        if (!schoolName || !standed || !grade || !subject || !description || !start || !end) {
             return res.status(400).json(new ApiError(400, "All Field is Required"));
         }
 
@@ -19,7 +19,9 @@ const addEducation = async (req, res) => {
             standed,
             grade,
             subject,
-            description
+            description,
+            start,
+            end
         });
 
         if (!educationDetail) {
@@ -37,7 +39,7 @@ const addEducation = async (req, res) => {
 
 const updateEducationDetail = async (req, res) => {
     try {
-        const { educationId, grade, subject, description } = req.body;
+        const { educationId, grade, subject, description, start, end } = req.body;
 
         if (!educationId) {
             return res.status(404).json(new ApiError(404, "Education Id is Required"));
@@ -48,7 +50,9 @@ const updateEducationDetail = async (req, res) => {
             {
                 grade,
                 subject,
-                description
+                description,
+                start,
+                end
             }
         );
 

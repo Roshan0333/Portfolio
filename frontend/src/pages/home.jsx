@@ -51,7 +51,7 @@ function Home() {
     ];
 
     return (
-        <div className="h-full w-full">
+        <div className="h-full max-w-full overflow-x-hidden">
             <div className="max-w-full flex flex-col-reverse md:flex-row justify-around">
                 <div className="flex-1 h-100 flex flex-col justify-center items-center text-start mx-5 mt-10">
                     <span
@@ -102,7 +102,7 @@ function Home() {
 
             <div className="overflow-hidden w-full h-15  mt-10 border-y-2 border-white">
                 <motion.div
-                    className="flex items-center gap-10 w-max-full h-full"
+                    className="flex items-center gap-10 w-max h-full overflow-x-hidden"
                     animate={{ x: ["0%", "-50%"] }}
                     transition={{
                         duration: 10,
