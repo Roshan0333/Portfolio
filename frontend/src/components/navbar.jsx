@@ -10,6 +10,8 @@ function Navbar() {
 
     const [isOpen, setIsOpen] = useState(false);
 
+    const [selection, setSelection] = useState(0);
+
     const navListArray = [
         {
             name: "Home",
@@ -63,14 +65,14 @@ function Navbar() {
                         <img src={portfolioAgent} className="rounded-full" />
 
                         <motion.div
-                        className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
-                        animate={{left:["-100%", "100%"]}}
-                        transition={{
-                            repeat: Infinity,
-                            ease:"easeInOut",
-                            duration:2,
-                            repeatDelay:2
-                        }}
+                            className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
+                            animate={{ left: ["-100%", "100%"] }}
+                            transition={{
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                                duration: 2,
+                                repeatDelay: 2
+                            }}
                         />
                     </motion.div>
                     <div className="flex flex-col justify-between w-6 h-5 cursor-pointer mr-3" onClick={handleMenu}>
@@ -90,7 +92,7 @@ function Navbar() {
 
                 <div className="hidden md:flex items-center gap-2 justify-center mr-3">
                     {navListArray.map((item, index) => {
-                        return <Link to={item.path} className="text-black mr-1 cursor-pointer text-[15px] hover:bg-black hover:text-white rounded-full p-2" key={index} >{item.name}</Link>
+                        return <Link to={item.path} className={`${selection === index ? "text-white bg-black" : "text-black bg-white"} mr-1 cursor-pointer text-[15px] hover:bg-black hover:text-white rounded-full p-2`} key={index} onClick={() => setSelection(index)}>{item.name}</Link>
                     })}
                 </div>
 
