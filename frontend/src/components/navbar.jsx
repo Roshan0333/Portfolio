@@ -3,14 +3,14 @@ import logo from "../assets/Portfolio_logo.webp";
 import cross from "../assets/cross.webp";
 import portfolioAgent from "../assets/agent-logo.webp";
 import { FaBars } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion"
 
 function Navbar() {
 
     const [isOpen, setIsOpen] = useState(false);
 
-    const [selection, setSelection] = useState(0);
+    const location = useLocation();
 
     const navListArray = [
         {
@@ -92,7 +92,7 @@ function Navbar() {
 
                 <div className="hidden md:flex items-center gap-2 justify-center mr-3">
                     {navListArray.map((item, index) => {
-                        return <Link to={item.path} className={`${selection === index ? "text-white bg-black" : "text-black bg-white"} mr-1 cursor-pointer text-[15px] hover:bg-black hover:text-white rounded-full p-2`} key={index} onClick={() => setSelection(index)}>{item.name}</Link>
+                        return <Link to={item.path} className={`${(location.pathname === item.path) ? "text-white bg-black" : "text-black bg-white"} mr-1 cursor-pointer text-[15px] hover:bg-black hover:text-white rounded-full p-2`} key={index}>{item.name}</Link>
                     })}
                 </div>
 

@@ -3,15 +3,19 @@
 :root {
   --text: #6b6375;
   --text-h: #08060d;
-  --bg: #fff;
+  --bg: #ffffff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
+
   --accent: #aa3bff;
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
+
   --social-bg: rgba(244, 243, 236, 0.5);
+
   --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px,
+    rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -19,13 +23,19 @@
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
+
   color-scheme: light dark;
   color: var(--text);
-  background: var(--bg);
+
+  /* 🔥 UPDATED BACKGROUND */
+  background: linear-gradient(90deg, #14072F, #3A1C71, #6A3FD1);
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  overflow-x: hidden;
 
   @media (max-width: 1024px) {
     font-size: 16px;
@@ -39,12 +49,19 @@
     --bg: #16171d;
     --border: #2e303a;
     --code-bg: #1f2028;
+
     --accent: #c084fc;
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
+
     --social-bg: rgba(47, 48, 58, 0.5);
+
     --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px,
+      rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+
+    /* 🔥 SAME GRADIENT FOR DARK MODE */
+    background: linear-gradient(90deg, #14072F, #3A1C71, #6A3FD1);
   }
 
   #social .button-icon {
@@ -54,6 +71,32 @@
 
 body {
   margin: 0;
+  position: relative;
+}
+
+/* optional glow still works with gradient */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #8B5CF6, transparent 70%);
+  filter: blur(120px);
+  opacity: 0.25;
+  z-index: -1;
+  animation: float 12s infinite ease-in-out;
+}
+
+body::before {
+  top: -100px;
+  left: -100px;
+}
+
+body::after {
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 6s;
 }
 
 #root {
@@ -66,6 +109,7 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  backdrop-filter: blur(10px);
 }
 
 h1,
@@ -79,20 +123,24 @@ h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
+
   @media (max-width: 1024px) {
     font-size: 36px;
     margin: 20px 0;
   }
 }
+
 h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
+
   @media (max-width: 1024px) {
     font-size: 20px;
   }
 }
+
 p {
   margin: 0;
 }
@@ -112,25 +160,37 @@ code {
   background: var(--code-bg);
 }
 
-@keyframes flow {
-    0%{
-        transform: translateY(0);
-        opacity: 0.3;
-    }
-    50%{
-        opacity: 1;
-    }
-    100%{
-        transform: translateY(100%);;
-        opacity: 0.3;
-    }
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(40px) translateX(20px);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
 }
 
-@keyframes pulseGlow{
-    0%, 100%{
-        box-shadow: 0 0 10px #8B5CF6;
-    }
-    50%{
-        box-shadow: 0 0 25px #C4B5FD;
-    }
+@keyframes flow {
+  0% {
+    transform: translateY(0);
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(var(--linear, 600px));
+    opacity: 0.3;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px #8B5CF6;
+  }
+  50% {
+    box-shadow: 0 0 25px #C4B5FD;
+  }
 }
