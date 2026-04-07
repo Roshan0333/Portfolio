@@ -38,17 +38,17 @@ export function Experience() {
         <div className="relative w-[98%] md:w-[80%] flex flex-col items-center justify-center gap-4 p-5  m-auto">
 
             <div className="z-10 flex items-center w-full">
-                <div className="border-t-4 border-[#14072F] w-13 ml-9 md:w-20 md:ml-12 shadow-[0_0_10px_#8B5CF6]"></div>
+                <div className="border-t-4 border-[#14072F] w-13 ml-9 md:w-20 md:ml-12 lg:ml-12  shadow-[0_0_10px_#8B5CF6] overflow-hidden"></div>
                 <div className="flex flex-col justify-center items-start mt-1">
                     <p className="text-4xl font-bold text-white">Experience</p>
                     <p>My Career Journey</p>
                 </div>
             </div>
 
-            <div className="absolute top-13 bottom-0 left-[53px] md:left-[75px] lg:left[85px] w-[4px]
+            <div className="absolute top-13 bottom-0 left-[53px] md:left-[65px] lg:left-[75px] w-[4px]
             bg-gradient-to-b from-[#14072F] via-[#3A1C71] to-[#6A3FD1] animate-[pulseGlow_5s_infinite]"></div>
 
-            <div className="absolute top-13 bottom-0 left-[54px] md:left-[65px] lg:left-[75px] w-[4px] overflow-hidden">
+            <div className="absolute top-13 bottom-0 left-[53px] md:left-[65px] lg:left-[75px] w-[4px] overflow-hidden">
                 <div className="w-full h-full bg-gradient-to-b from-[#14072F] via-[#3A1C71] to-[#6A3FD1]"></div>
                 <div className="absolute w-full h-[50px] top-0 bg-gradient-to-b from-[#6A3FD] via-[#3A1C71] to-[#14072F] animate-[flow_5s_infinite] z-10"></div>
             </div>

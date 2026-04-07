@@ -6,6 +6,8 @@ import Home from './pages/home';
 import Footer from './components/footer';
 import { Education } from './pages/education';
 import { Experience } from './pages/experience';
+import { Project } from './pages/project';
+import { Certficate } from './pages/certificate';
 
 function App() {
 
@@ -16,6 +18,8 @@ function App() {
       <Route path='/' element={<Home/>}/>
       <Route path="/education" element={<Education/>}/>
       <Route path="/experience" element={<Experience/>}/>
+      <Route path='/project' element={<Project/>}/>
+      <Route path='/certificate' element={<Certficate/>}/>
      </Routes>
      <Footer/>
     </>

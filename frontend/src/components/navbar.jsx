@@ -33,6 +33,10 @@ function Navbar() {
             name: "Certificate",
             path: "/certificate"
         },
+         {
+            name: "Contact Us",
+            path: "/contact"
+        },
     ]
 
     const handleMenu = () => {
