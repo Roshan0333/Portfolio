@@ -6,7 +6,7 @@ function SkillCard({ skills }) {
   const skillList = skills.items;
 
   return (
-    <div className=" w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-lg hover:shadow-xl transition duration-300">
+    <div className=" w-full bg-[#14072F] backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-lg hover:shadow-xl transition duration-300">
 
       <h2 className="text-xl md:text-2xl font-bold mb-6 text-white">
         {title}

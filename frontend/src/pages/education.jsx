@@ -1,7 +1,7 @@
 import { EducationCard } from "../cards/educationCard"
 import { FaGraduationCap } from "react-icons/fa"
 
-export function Education() {
+function Education() {
     const educationList = [
         {
             "userId": "6610f1c2a1b23c456789abcd",
@@ -79,3 +79,5 @@ export function Education() {
         </div>
     )
 }
+
+export default Education;

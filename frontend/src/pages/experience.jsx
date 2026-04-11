@@ -1,7 +1,7 @@
 import { CareerCard } from "../cards/careerCard";
 import { FaBriefcase } from "react-icons/fa";
 
-export function Experience() {
+function Experience() {
 
     const experienceData = [
         {
@@ -70,3 +70,5 @@ export function Experience() {
         </div>
     )
 }
+
+export default Experience;

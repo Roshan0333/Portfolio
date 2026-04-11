@@ -34,7 +34,7 @@ function Navbar() {
             path: "/certificate"
         },
          {
-            name: "Contact Us",
+            name: "Contact Me",
             path: "/contact"
         },
     ]

@@ -1,6 +1,6 @@
 import { ProjectCard } from "../cards/projectCard"
 
-export function Project() {
+function Project() {
 
     const projectList = [
         {
@@ -98,3 +98,5 @@ export function Project() {
         </div>
     )
 }
+
+export default Project;

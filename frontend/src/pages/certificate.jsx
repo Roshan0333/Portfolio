@@ -1,6 +1,6 @@
 import { CertificateCard } from "../cards/certificateCard";
 
-export function Certficate(){
+function Certficate(){
     const certificates = [
     {
       name: "Full Stack Web Development",
@@ -25,3 +25,5 @@ export function Certficate(){
         </div>
     )
 }
+
+export default Certficate;
