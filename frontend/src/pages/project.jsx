@@ -1,4 +1,5 @@
-import { ProjectCard } from "../cards/projectCard"
+import { ProjectCard } from "../cards/projectCard";
+import { motion } from "framer-motion"
 
 function Project() {
 
@@ -90,12 +91,48 @@ function Project() {
         }
     ]
 
+
+    const cardVariants = {
+        hidden: {
+            opacity: 0,
+            y: 50
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.6,
+                ease: [0.25, 0.8, 0.25, 1]
+            }
+        }
+    }
+
     return (
-        <div className="grid grid-cols-[repeat(1,1fr)] sm:grid-cols-[repeat(2,1fr)] md:grid-cols-[repeat(3,1fr)] gap-4 p-5">
+        <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false }}
+            variants={{
+                visible: {
+                    transition: {
+                        staggerChildren: 0.2
+                    }
+                }
+            }}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-5">
             {projectList.map((item, index) => {
-                return <ProjectCard data={item} key={index} />
+                return <motion.div
+                    key={index}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: false, margin: "-50px"}}
+                    variants={cardVariants}
+                    className="h-full"
+                >
+                    <ProjectCard data={item} />
+                </motion.div>
             })}
-        </div>
+        </motion.div>
     )
 }
 

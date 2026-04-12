@@ -50,6 +50,21 @@ function Home() {
         }
     ];
 
+    const cardVariant = {
+        hidden: {
+            opacity: 0,
+            y: 100
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.6,
+                ease: [0.25, 0.8, 0.25, 1]
+            }
+        }
+    };
+
     return (
         <div className="h-full max-w-full overflow-x-hidden">
             <div className="max-w-full flex flex-col-reverse md:flex-row justify-around">
@@ -120,11 +135,31 @@ function Home() {
                 </motion.div>
             </div>
 
-            <div className=" w-full grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mt-10 mb-4 px-4">
+            <motion.div
+                initial='hidden'
+                whileInView="visible"
+                viewport={{ once: false }}
+                variants={{
+                    hidden: {},
+                    visible: {
+                        transition: {
+                            staggerChildren: 0.2
+                        }
+                    }
+                }}
+                className=" w-full grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mt-10 mb-4 px-4">
                 {skillsCardList.map((skill, index) => {
-                    return <SkillCard skills={skill} key={index}/>
+                    return <motion.div
+                    key = {index}
+                    variants={cardVariant}
+                    initial="hidden"
+                    whileInView= "visible"
+                    viewport={{once: false, margin: "-50px"}}
+                    >
+                        <SkillCard skills={skill} key={index} />
+                    </motion.div>
                 })}
-            </div>
+            </motion.div>
         </div>
     )
 }

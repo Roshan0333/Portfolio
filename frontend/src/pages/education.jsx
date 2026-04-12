@@ -1,5 +1,6 @@
 import { EducationCard } from "../cards/educationCard"
-import { FaGraduationCap } from "react-icons/fa"
+import { FaGraduationCap } from "react-icons/fa";
+import {motion} from "framer-motion"
 
 function Education() {
     const educationList = [
@@ -42,6 +43,20 @@ function Education() {
         }
     ]
 
+    const cardVariants = {
+        hidden: {
+            opacity: 0,
+            y: 50
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.6,
+                ease: [0.25, 0.8, 0.25, 1]
+            }
+        }
+    }
 
     return (
         <div>
@@ -58,23 +73,43 @@ function Education() {
                 </div>
 
                 <div className="absolute top-14 bottom-0 left-[45px] md:left-[60px] lg:left-[65px] w-[4px] overflow-hidden">
-                   <div className="w-full h-full bg-gradient-to-b from-[#7C3AED] via-[#8B5CF6] to-[#C4B5FD]"></div> 
-                   <div className="absolute w-full h-[50px] top-0 bg-gradient-to-b from-[#E9D5FF] via-[#7C3AED] to-[#4C1D95] animate-[flow_5s_infinite] z-10"></div>
+                    <div className="w-full h-full bg-gradient-to-b from-[#7C3AED] via-[#8B5CF6] to-[#C4B5FD]"></div>
+                    <div className="absolute w-full h-[50px] top-0 bg-gradient-to-b from-[#E9D5FF] via-[#7C3AED] to-[#4C1D95] animate-[flow_5s_infinite] z-10"></div>
                 </div>
-                {educationList.map((item, index) => {
-                    return <div className="flex items-center justify-center gap-2 md:gap-5 w-full">
-                        <div
-                            className="z-10 w-15 h-15 md:w-20 md:h-20 flex justify-center items-center rounded-full bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] p-[2px] shadow-[0_0_10px_#8B5CF6] w-fit">
+                <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: false }}
+                    variants={{
+                        hidden: {},
+                        visible: {
+                            transition: {
+                                staggerChildren: 0.2
+                            }
+                        }
+                    }}
+                    className="flex flex-col items-center justify-center gap-2 md:gap-5 w-full">
+                    {educationList.map((item, index) => {
+                        return <motion.div
+                            key={index}
+                            initial = "hidden"
+                            whileInView = "visible"
+                            viewport = {{once: false, margin: "-50px"}}
+                            variants= {cardVariants}
+                            className="flex items-center justify-center gap-2 md:gap-5 w-full">
                             <div
-                                className="w-13 h-13 md:w-18 md:h-18 flex justify-center items-center rounded-full bg-[#2A2A40]  shadow-[inset_0_0_10px_#A78BFA,0_0_10px_#8B5CF6]">
-                                <FaGraduationCap size={55} className="text-white p-1 rounded-full" />
+                                className="z-10 w-15 h-15 md:w-20 md:h-20 flex justify-center items-center rounded-full bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] p-[2px] shadow-[0_0_10px_#8B5CF6] w-fit">
+                                <div
+                                    className="w-13 h-13 md:w-18 md:h-18 flex justify-center items-center rounded-full bg-[#2A2A40]  shadow-[inset_0_0_10px_#A78BFA,0_0_10px_#8B5CF6]">
+                                    <FaGraduationCap size={55} className="text-white p-1 rounded-full" />
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex-1 w-full">
-                            <EducationCard data={item} />
-                        </div>
-                    </div>
-                })}
+                            <div className="flex-1 w-full">
+                                <EducationCard data={item} />
+                            </div>
+                        </motion.div>
+                    })}
+                </motion.div>
             </div>
         </div>
     )

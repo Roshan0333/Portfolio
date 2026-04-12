@@ -1,5 +1,6 @@
 import { CareerCard } from "../cards/careerCard";
 import { FaBriefcase } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 function Experience() {
 
@@ -34,6 +35,21 @@ function Experience() {
         }
     ];
 
+    const cardVariants = {
+        hidden: {
+            opacity: 0,
+            y: 50
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.6,
+                ease: [0.25, 0.8, 0.25, 1]
+            }
+        }
+    }
+
     return (
         <div className="relative w-[98%] md:w-[80%] flex flex-col items-center justify-center gap-4 p-5  m-auto">
 
@@ -53,8 +69,29 @@ function Experience() {
                 <div className="absolute w-full h-[50px] top-0 bg-gradient-to-b from-[#6A3FD] via-[#3A1C71] to-[#14072F] animate-[flow_5s_infinite] z-10"></div>
             </div>
 
-            {experienceData.map((item, index) => {
-                return <div className="flex items-center justify-center gap-2 md:gap-5 w-full">
+            <motion.div
+                initial='hidden'
+                whileInView="visible"
+                viewport={{ once: false }}
+                variants={{
+                    hidden: {},
+                    visible: {
+                        transition: {
+                            staggerChildren: 0.2
+                        }
+                    }
+                }}
+
+                className="flex flex-col gap-2 md:gap-5"
+            >
+                {experienceData.map((item, index) => {
+                    return <motion.div
+                        key={index}
+                        variants={cardVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{once: false, margin:"-50px"}}
+                        className="flex items-center justify-center gap-2 md:gap-5 w-full">
 
                         <div className="z-10 h-18 w-18 md:w-24 md:h-24 flex-shrink-0 flex justify-center items-center rounded-full bg-gradient-to-r from-[#14072F] via-[#3A1C71] to-[#6A3FD1] shadow-[0_0_10px_#8B5CF6]">
                             <div className="w-13 h-13 md:w-18 md:h-18 flex justify-center items-center rounded-full bg-[#2A2A40] shadow-[inset_0_0_10px_#14072F, 0_0_10px_#6A3FD1]">
@@ -62,11 +99,12 @@ function Experience() {
                             </div>
                         </div>
 
-                    <div>
-                        <CareerCard data={item} key={index} />
-                    </div>
-                </div>
-            })}
+                        <div>
+                            <CareerCard data={item} key={index} />
+                        </div>
+                    </motion.div>
+                })}
+            </motion.div>
         </div>
     )
 }
