@@ -1,4 +1,4 @@
-import { ProjectCard } from "../cards/projectCard";
+import { ProjectCard } from "../../cards/projectCard";
 import { motion } from "framer-motion"
 
 function Project() {

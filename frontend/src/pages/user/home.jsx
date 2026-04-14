@@ -1,7 +1,7 @@
-import Roshan from "../assets/Roshan.webp"
+import Roshan from "../../assets/Roshan.webp"
 import { motion } from "framer-motion";
 import { FaLinkedin, FaGithub } from "react-icons/fa"
-import SkillCard from "../cards/skillsCard";
+import SkillCard from "../../cards/skillsCard";
 
 function Home() {
 

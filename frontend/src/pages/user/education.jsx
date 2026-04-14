@@ -1,4 +1,4 @@
-import { EducationCard } from "../cards/educationCard"
+import { EducationCard } from "../../cards/educationCard"
 import { FaGraduationCap } from "react-icons/fa";
 import {motion} from "framer-motion"
 

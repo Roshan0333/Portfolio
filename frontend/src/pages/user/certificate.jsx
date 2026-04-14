@@ -1,4 +1,4 @@
-import { CertificateCard } from "../cards/certificateCard";
+import { CertificateCard } from "../../cards/certificateCard";
 import {motion} from "framer-motion";
 
 function Certficate(){

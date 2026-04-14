@@ -1,7 +1,7 @@
 import { useState } from "react";
-import logo from "../assets/Portfolio_logo.webp";
-import cross from "../assets/cross.webp";
-import portfolioAgent from "../assets/agent-logo.webp";
+import logo from "../../assets/Portfolio_logo.webp";
+import cross from "../../assets/cross.webp";
+import portfolioAgent from "../../assets/agent-logo.webp";
 import { FaBars } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion"

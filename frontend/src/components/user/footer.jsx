@@ -1,4 +1,4 @@
-import Logo from "../assets/Portfolio_logo.webp";
+import Logo from "../../assets/Portfolio_logo.webp";
 import { FaLinkedin, FaGithub, FaEnvelope, FaMobile, FaAddressCard, FaHeart } from "react-icons/fa"
 
 function Footer() {

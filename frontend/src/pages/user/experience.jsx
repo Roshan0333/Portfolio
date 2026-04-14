@@ -1,4 +1,4 @@
-import { CareerCard } from "../cards/careerCard";
+import { CareerCard } from "../../cards/careerCard";
 import { FaBriefcase } from "react-icons/fa";
 import { motion } from "framer-motion";
 
