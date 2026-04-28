@@ -2,8 +2,16 @@ import Roshan from "../../assets/Roshan.webp"
 import { motion } from "framer-motion";
 import { FaLinkedin, FaGithub } from "react-icons/fa"
 import SkillCard from "../../cards/skillsCard";
+import { fetchProfile } from "../../redux/thunk";
+import {useEffect, useState} from "react";
+import { useDispatch } from "react-redux";  
 
 function Home() {
+
+    const dispatch = useDispatch();
+
+    const [loading, setLoading] = useState(false);
+     const [error, setError] = useState(false)
 
     const skills = [
         "React.js",
@@ -64,6 +72,15 @@ function Home() {
             }
         }
     };
+
+    useEffect(() => {
+        dispatch(fetchProfile());
+
+        console.log(dispatch(fetchProfile()));
+    }, [dispatch]);
+
+    if (loading) return <h2>Loading...</h2>;
+    if (error) return <h2>{error}</h2>;
 
     return (
         <div className="h-full max-w-full overflow-x-hidden">
@@ -150,11 +167,11 @@ function Home() {
                 className=" w-full grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mt-10 mb-4 px-4">
                 {skillsCardList.map((skill, index) => {
                     return <motion.div
-                    key = {index}
-                    variants={cardVariant}
-                    initial="hidden"
-                    whileInView= "visible"
-                    viewport={{once: false, margin: "-50px"}}
+                        key={index}
+                        variants={cardVariant}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: false, margin: "-50px" }}
                     >
                         <SkillCard skills={skill} key={index} />
                     </motion.div>

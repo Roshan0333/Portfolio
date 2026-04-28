@@ -51,10 +51,10 @@ const profileSchema = Schema({
         type: Date
     },
     address: {
-        street: { String },
-        pincode: { Number },
-        city: { String },
-        country: { String }
+        street: { type: String },
+        pincode: { type: String },
+        city: { type: String },
+        country: { type: String }
     },
     socialMediaLink: [
         {
@@ -65,6 +65,9 @@ const profileSchema = Schema({
             link: {
                 type: String,
                 unique: true,
+            },
+            icon: {
+                type: String
             }
         }
     ]

@@ -2,6 +2,7 @@ import AdminNavbar from "../components/admin/navbar";
 import { Routes, Route } from "react-router-dom";
 import Profile from "../pages/admin/profile";
 import Footer from "../components/user/footer";
+import { Education } from "../pages/admin/education";
 
 function AdminRoute() {
     return (
@@ -11,6 +12,7 @@ function AdminRoute() {
 
                 <Routes>
                     <Route path="profile" element={<Profile />} />
+                    <Route path="education" element={<Education/>}/>
                 </Routes>
             </div>
 

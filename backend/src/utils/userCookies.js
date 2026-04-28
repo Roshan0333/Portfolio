@@ -3,16 +3,16 @@ import ApiError from "./api-errors.js";
 
 const userCookies = async (res, user) => {
     try{
-        const {accessToken, refreshToken} = await jwtToken(user);
+        const {accessToken, refreshToken} = await jwtToken({user});
 
-        res.cookie(accessToken, "AccessToken", {
+        res.cookie("AccessToken", accessToken, {
             httpOnly: true,
             secure: false,
             sameSite: "Lax",
             maxAge: 60*60*1000
         })
 
-        res.cookie(refreshToken, "RefreshToken", {
+        res.cookie( "RefreshToken", refreshToken,{
             httpOnly: true,
             secure: false,
             sameSite: "Lax",

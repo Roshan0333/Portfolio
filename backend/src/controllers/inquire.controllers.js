@@ -1,6 +1,6 @@
 import InquireModel from "../models/inquire.model.js";
-import { ApiError } from "../utils/api-errors.js";
-import { ApiResponse } from "../utils/api-response.js";
+import ApiError from "../utils/api-errors.js";
+import ApiResponse from "../utils/api-response.js";
 import { informEmail } from "../utils/informEmail.js";
 import { thanksEmail } from "../utils/thankEmail.js";
 

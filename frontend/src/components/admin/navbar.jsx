@@ -9,7 +9,7 @@ function AdminNavbar() {
     const navLink = [
         { name: "Profile", path: "/admin/profile" },
         { name: "Project", path: "" },
-        { name: "Education", path: "" },
+        { name: "Education", path: "/admin/education" },
         { name: "Experience", path: "" },
         { name: "Certificate", path: "" },
         { name: "Inquire", path: "" },
@@ -21,7 +21,7 @@ function AdminNavbar() {
         <div className="max-w-full md:w-[25%] md:h-screen flex flex-col justify-center items-center ml-2 border-[#5520b7] shadow-[0_0_10px_#5520b7] rounded-2xl">
 
             {/* Top Mobile Navbar */}
-            <div className="w-[95%] flex justify-between md:hidden px-4 py-3 my-3 
+            <div className="relative w-[95%] flex justify-between md:hidden px-4 py-3 my-3 
             bg-gradient-to-r from-[#14072F] to-[#2a0b5c] 
             rounded-xl shadow-lg border border-white/10">
 
@@ -49,7 +49,7 @@ function AdminNavbar() {
             </div>
 
             {/* Sidebar */}
-            <div className={`w-full h-screen ${open ? "block" : "hidden"} md:block rounded-2xl`}>
+            <div className={`w-[60%] md:w-full h-screen ${open ? "block absolute z-100 top-0 left-0" : "hidden"}  md:block rounded-2xl`}>
 
                 <div className="w-full h-screen flex flex-col justify-center items-center gap-4 px-3 
                 bg-gradient-to-b from-[#6A3FD1] to-[#3b0f9c] 

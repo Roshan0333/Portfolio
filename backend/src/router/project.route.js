@@ -5,7 +5,7 @@ import multer from "multer"
 
 const router = Router();
 
-const storage = multer.diskStorage();
+const storage = multer.memoryStorage();
 
 const upload = multer({storage})
 
