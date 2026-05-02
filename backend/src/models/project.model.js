@@ -21,7 +21,8 @@ const projectSchema = Schema({
     }]
     ,
     durationTime: {
-        type: Date,
+        start: String,
+        end: String
     },
     role: {
         type: String,
@@ -46,8 +47,8 @@ const projectSchema = Schema({
         }
     ],
     socialMedia: [{
-        name: { String },
-        link: { String }
+        name: String ,
+        link: String
     }],
     status: {
         type: Boolean,

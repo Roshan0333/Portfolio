@@ -23,7 +23,7 @@ const requiredToLogin = async (req, res, next) => {
             const jwtVerify = await jwt.verify(refreshToken, securityKey);
 
             if (!jwtVerify) {
-                return res.status(401).json(401, "Please Login");
+                return res.status(401).json(new ApiError(401, "Please Login"));
             }
 
             req.user = jwtVerify.user;
@@ -32,7 +32,7 @@ const requiredToLogin = async (req, res, next) => {
             return next()
         }
         else {
-            return res.status(401).json(401, "Please Login");
+            return res.status(401).json(new ApiError(401, "Please Login"));
         }
     }
     catch (err) {

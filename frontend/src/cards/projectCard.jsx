@@ -49,7 +49,7 @@ export function ProjectCard({ data }) {
             <div className="flex items-center">
                 <div className="flex-1 flex w-[60px] gap-[10px]">
                     {data.socialMedia.map((item, index) => {
-                        return (item.name === "github")?
+                        return (item.name === "Github")?
                         <a href={item.link} key={index}><FaGithub size={"25px"} /></a>:<a href={item.link} key={index}><FaChrome size={"25px"}/></a>
                     })}
                 </div>

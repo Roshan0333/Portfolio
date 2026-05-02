@@ -9,7 +9,7 @@ const addExperience = async (req, res) => {
 
         const { companyName, position, joiningDate, leavingDate, description } = req.body;
 
-        if (!companyName || !position || !joiningDate || !leavingDate || !description) {
+        if (!companyName || !position || !joiningDate || !description) {
             return res.status(404).json(new ApiError(404, "All Field is Required"));
         }
 
@@ -27,6 +27,7 @@ const addExperience = async (req, res) => {
         }
 
         await client.del("Experience");
+        await experienceDetail.save();
 
         return res.status(200).json(new ApiResponse(200, experienceDetail, "Experience Add Successfully"));
     }
@@ -54,13 +55,13 @@ const updateExperience = async (req, res) => {
                 status
             });
 
-            if(!experienceDetail){
-                return res.status(400).json(new ApiError(400, "Experience Updation Failed"));
-            }
+        if (!experienceDetail) {
+            return res.status(400).json(new ApiError(400, "Experience Updation Failed"));
+        }
 
-            await client.del("Experience");
+        await client.del("Experience");
 
-            return res.status(200).json(new ApiResponse(200, experienceDetail, "Experience Update Successfully"));
+        return res.status(200).json(new ApiResponse(200, experienceDetail, "Experience Update Successfully"));
     }
     catch (err) {
         return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));
@@ -68,10 +69,10 @@ const updateExperience = async (req, res) => {
 }
 
 const deleteExperience = async (req, res) => {
-    try{
-        const {experienceId} = req.body;
+    try {
+        const { experienceId } = req.body;
 
-        if(!experienceId){
+        if (!experienceId) {
             return res.status(404).json(new ApiError(404, "Experience Id is Required"));
         }
 
@@ -81,22 +82,22 @@ const deleteExperience = async (req, res) => {
 
         return res.status(200).json(new ApiResponse(200, null, "Experience Remove Successfully"));
     }
-    catch(err){
-        return res.status(500).json(new ApiError(500, err.message, [{message: err.message, name: err.name}]));
+    catch (err) {
+        return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));
     }
 }
 
 const getExperience = async (req, res) => {
-    try{
+    try {
         const redisExperienceDetails = await client.get("Experience");
 
-        if(redisExperienceDetails){
+        if (redisExperienceDetails) {
             return res.status(200).json(new ApiResponse(200, JSON.parse(redisExperienceDetails), "Successfully"));
         }
 
         const experienceDetails = await experienceModel.find();
 
-        if(experienceDetails.length === 0){
+        if (experienceDetails.length === 0) {
             return res.status(404).json(new ApiError(404, "No Experience Found"));
         }
 
@@ -104,9 +105,9 @@ const getExperience = async (req, res) => {
 
         return res.status(200).json(new ApiResponse(200, experienceDetails, "Successfully"));
     }
-    catch(err){
-        return res.status(500).json(new ApiError(500, err.message, [{message: err.message, name: err.name}]));
+    catch (err) {
+        return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));
     }
 }
 
-export {addExperience, updateExperience, deleteExperience, getExperience};
+export { addExperience, updateExperience, deleteExperience, getExperience };

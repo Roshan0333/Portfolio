@@ -8,11 +8,11 @@ function AdminNavbar() {
 
     const navLink = [
         { name: "Profile", path: "/admin/profile" },
-        { name: "Project", path: "" },
+        { name: "Project", path: "/admin/project" },
         { name: "Education", path: "/admin/education" },
-        { name: "Experience", path: "" },
-        { name: "Certificate", path: "" },
-        { name: "Inquire", path: "" },
+        { name: "Experience", path: "/admin/experience" },
+        { name: "Certificate", path: "/admin/certificate" },
+        { name: "Inquire", path: "/admin/inquire" },
     ]
 
     const [open, setOpen] = useState(false);
@@ -82,7 +82,8 @@ function AdminNavbar() {
                                 return (
                                     <Link 
                                         to={item.path} 
-                                        key={index} 
+                                        key={index}
+                                        onClick={() => setOpen(false)}
                                         className="mx-2 rounded-xl 
                                         bg-[#14072F]/90 border border-white/10 
                                         hover:bg-gradient-to-r hover:from-purple-600 hover:to-violet-500 

@@ -23,8 +23,8 @@ function Project() {
                 }
             ],
             "socialMedia": [
-                { "name": "github", "link": "https://github.com/example/traffic-system" },
-                { "name": "chrome", "link": "https://traffic-demo.com" }
+                { "name": "Github", "link": "https://github.com/example/traffic-system" },
+                { "name": "Chrome", "link": "https://traffic-demo.com" }
             ],
             "status": true,
             "faviourate": true
@@ -44,7 +44,7 @@ function Project() {
                 }
             ],
             "socialMedia": [
-                { "name": "github", "link": "https://github.com/example/movie-recommender" }
+                { "name": "Github", "link": "https://github.com/example/movie-recommender" }
             ],
             "status": true,
             "faviourate": false
@@ -64,7 +64,7 @@ function Project() {
                 }
             ],
             "socialMedia": [
-                { "name": "chrome", "link": "https://portfolio-demo.com" }
+                { "name": "Chrome", "link": "https://portfolio-demo.com" }
             ],
             "status": true,
             "faviourate": false
@@ -84,7 +84,7 @@ function Project() {
                 }
             ],
             "socialMedia": [
-                { "name": "github", "link": "https://github.com/example/chat-app" }
+                { "name": "Github", "link": "https://github.com/example/chat-app" }
             ],
             "status": true,
             "faviourate": false

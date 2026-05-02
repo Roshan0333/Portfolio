@@ -19,8 +19,8 @@ const inquireSchema = new Schema({
     },
     status:{
         type: String,
-        enum:["Applied", "Not Applied"],
-        default: "Not Applied"
+        enum:["Applied", "UnApplied"],
+        default: "UnApplied"
     }
 }, {timestamps: true});
 

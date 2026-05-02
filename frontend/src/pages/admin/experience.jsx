@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { FaBook, FaSchool, FaTrash, FaPen, FaGraduationCap, FaTimes } from "react-icons/fa";
+import { FaBuilding, FaBriefcase, FaTrash, FaPen, FaGraduationCap, FaTimes } from "react-icons/fa";
 import { deleteService, postService, putService } from "../../service/axios.js"
 
-export function Education() {
+export function Experience() {
 
-    const educationData = [
+    const experienceData = [
         {
             schoolName: "IGNOU University",
             standed: "Bachelor's Degree",
@@ -48,10 +48,10 @@ export function Education() {
     ];
 
     const [formflag, setFormFlag] = useState(false);
-    const [selectedEducation, setSelectedEducation] = useState(null);
+    const [selectedExperience, setSelectedExperience] = useState(null);
 
     const handleFormFlag = (data = null) => {
-        setSelectedEducation(data);
+        setSelectedExperience(data);
         setFormFlag(prev => !prev)
     }
 
@@ -60,17 +60,17 @@ export function Education() {
 
             {formflag &&
                 <div className="fixed inset-0 z-[10000] flex items-start justify-center backdrop-blur-sm bg-black/30">
-                    <EducationForm flag={handleFormFlag} data={selectedEducation} />
+                    <ExperienceForm flag={handleFormFlag} data={selectedExperience} />
                 </div>}
 
             <div className="flex items-center justify-between">
                 <div className="flex flex-col items-start text-left">
-                    <p className="text-4xl text-white">Education</p>
-                    <p>Add your education background details</p>
+                    <p className="text-4xl text-white">Experience</p>
+                    <p>Add your experience background details</p>
                 </div>
 
                 <div className="bg-gradient-to-r from-[#4C0FAF] via-[#6A1BDB] to-[#8138e7] rounded-xl hover:scale-105 transition">
-                    <button className="text-white p-2 " onClick={() => handleFormFlag()}>+ Add Education</button>
+                    <button className="text-white p-2 " onClick={() => handleFormFlag()}>+ Add Experience</button>
                 </div>
             </div>
 
@@ -80,16 +80,16 @@ export function Education() {
                 <div className="w-full flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="p-3 bg-[#1d0c45] border-[#8138e7] border-2 text-white rounded-full border-2">
-                            <FaBook className="text-2xl" />
+                            <FaBuilding className="text-2xl" />
                         </div>
                         <div className="flex flex-col items-start">
-                            <p className="text-xl text-white">My Education</p>
-                            <p className="text-[15px]">Manage your education records</p>
+                            <p className="text-xl text-white">My Experience</p>
+                            <p className="text-[15px]">Manage your experience records</p>
                         </div>
                     </div>
 
                     <div className="p-1 bg-[#1d0c45] border-[#8138e7] border-2 text-white text-[18px] rounded-xl">
-                        <p>{educationData.length}</p>
+                        <p>{experienceData.length}</p>
                         <p>Items</p>
                     </div>
                 </div>
@@ -99,8 +99,8 @@ export function Education() {
                   grid-cols-1 
                   sm:grid-cols-2 
                   lg:grid-cols-2">
-                        {educationData.map((item, index) => {
-                            return <EducationCard key={index} item={item} flag={handleFormFlag} />
+                        {experienceData.map((item, index) => {
+                            return <ExperienceCard key={index} item={item} flag={handleFormFlag} />
                         })}
                     </div>
                 </div>
@@ -109,13 +109,13 @@ export function Education() {
     )
 }
 
-function EducationCard({ item, flag }) {
+function ExperienceCard({ item, flag }) {
 
-    const deleteEducation = async (id) => {
+    const deleteExperience = async (id) => {
         try {
             const res = await deleteService(
-                "/portfolio/education/delete",
-                { educationId: id },
+                "/portfolio/experience/delete",
+                { experienceId: id },
                 {
                     headers: {
                         "Content-Type": "application/json"
@@ -144,7 +144,7 @@ function EducationCard({ item, flag }) {
             <div className="flex justify-between gap-1">
                 <div className="flex gap-2">
                     <div className="w-[80px] h-[80px] p-3 bg-[#14072F] text-white border-2 border-[#8138e7] flex items-center justify-center rounded-full">
-                        <FaSchool className="text-3xl" />
+                        <FaBriefcase className="text-3xl" />
                     </div>
                     <div className="flex flex-col justify-center items-start text-left">
                         <p className="text-[20px] text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">{item.standed}</p>
@@ -160,7 +160,7 @@ function EducationCard({ item, flag }) {
                     </div>
                     <div
                         className="p-2 bg-red-400 flex items-center justify-center rounded-[8px]"
-                        onClick={() => deleteEducation(item._id)}>
+                        onClick={() => deleteExperience(item._id)}>
                         <FaTrash className="text-[15px] text-red-600" />
                     </div>
                 </div>
@@ -175,35 +175,45 @@ function EducationCard({ item, flag }) {
     )
 }
 
-function EducationForm({ flag, data }) {
+function ExperienceForm({ flag, data }) {
 
-    const [college, setCollege] = useState(null);
-    const [degree, setDegree] = useState(null);
-    const [grade, setGrade] = useState(null);
-    const [subject, setSubject] = useState(null);
-    const [start, setStart] = useState(null);
-    const [end, setEnd] = useState(null);
+    const [companyName, setCompanyName] = useState(null);
+    const [position, setPosition] = useState(null);
+    const [joiningDate, setJoiningDate] = useState(null);
+    const [leavingDate, setLeavingDate] = useState(null);
     const [description, setDescription] = useState(null);
+    const [status, setStatus] = useState(true);
 
-    const [api, setApi] = useState(true)
+    const [selectApi, setSelectApi] = useState(true)
 
-    const education = async () => {
+    const experience = async () => {
+
         try {
+
+            const startDate = new Date(joiningDate).toLocaleDateString("en-US", {
+                month: "short",
+                year: "numeric"
+            });
+
+            const endDate = new Date(leavingDate).toLocaleDateString("en-US", {
+                month: "short",
+                year: "numeric"
+            });
+
             const formData = {
-                schoolName: college,
-                standed: degree,
-                grade: grade,
-                subject: subject,
+                companyName: companyName,
+                position: position,
                 description: description,
-                start: start,
-                end: end
+                joiningDate: startDate,
+                leavingDate: endDate,
+                status: status
             }
 
             let res;
 
-            if (api) {
+            if (selectApi) {
                 res = await postService(
-                    "/portfolio/education/add",
+                    "/portfolio/experience/add",
                     formData,
                     {
                         headers: {
@@ -214,7 +224,7 @@ function EducationForm({ flag, data }) {
             }
             else {
                 res = await putService(
-                    "/portfolio/education/update",
+                    "/portfolio/experience/update",
                     formData,
                     {
                         headers: {
@@ -228,13 +238,11 @@ function EducationForm({ flag, data }) {
 
             if (res.statusCode === 200) {
                 alert(res.message);
-                setCollege(null);
-                setDegree(null);
+                setCompanyName(null);
+                setPosition(null);
                 setDescription(null);
-                setEnd(null);
-                setGrade(null);
-                setStart(null);
-                setSubject(null);
+                setLeavingDate(null);
+                setJoiningDate(null);
                 flag()
                 return
             }
@@ -253,21 +261,22 @@ function EducationForm({ flag, data }) {
 
     useEffect(() => {
 
-        console.log(data)
+        if (!data) return
 
-        if (!data) {
-            return
-        }
+        const convertToInputFormat = (value) => {
+            const date = new Date(value);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            return `${year}-${month}`; // YYYY-MM
+        };
 
-        setCollege(data.schoolName);
-        setDegree(data.standed);
-        setGrade(data.grade);
-        setSubject(data.subject);
-        setStart(data.start);
-        setEnd(data.end);
+        setCompanyName(data.schoolName);
+        setPosition(data.standed);
+        setJoiningDate(convertToInputFormat(data.start));
+        setLeavingDate(convertToInputFormat(data.end));
         setDescription(data.description);
 
-        setApi(false)
+        setSelectApi(false)
 
     }, [data]);
 
@@ -279,8 +288,8 @@ function EducationForm({ flag, data }) {
                         <FaGraduationCap className="text-4xl" />
                     </div>
                     <div className="flex flex-col items-start justify-center">
-                        <p className="text-2xl text-white">Add Education</p>
-                        <p>Fill in your education details</p>
+                        <p className="text-2xl text-white">Add Experience</p>
+                        <p>Fill in your experience details</p>
                     </div>
                 </div>
                 <FaTimes className="text-2xl text-white" onClick={flag} />
@@ -289,78 +298,46 @@ function EducationForm({ flag, data }) {
             <div className="w-full py-2 flex flex-col items-center justify-center bg-[#1d0c45] rounded-2xl">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-[90%]">
                     <div className="flex flex-col w-full items-start text-white gap-2">
-                        <label>School/College Name *</label>
+                        <label>Company Name *</label>
                         <input
                             type="text"
-                            value={college}
-                            onChange={(e) => setCollege(e.target.value)}
+                            value={companyName}
+                            onChange={(e) => setCompanyName(e.target.value)}
                             required
-                            placeholder="Enter School/College Name"
+                            placeholder="Enter Company Name"
                             className="border-2 border-[#1d0c45] bg-[#14072F] rounded-xl w-[95%] p-2"
                         />
                     </div>
 
                     <div className="flex flex-col w-full items-start gap-2 text-white">
-                        <label>Standed/Degree *</label>
+                        <label>Position *</label>
                         <input
                             type="text"
-                            value={degree}
-                            onChange={(e) => setDegree(e.target.value)}
+                            value={position}
+                            onChange={(e) => setPosition(e.target.value)}
                             required
-                            placeholder="Enter Standed/Degree"
+                            placeholder="Enter Position"
                             className="border-2 border-[#1d0c45] bg-[#14072F] rounded-xl w-[95%] p-2"
                         />
                     </div>
 
                     <div className="flex flex-col w-full items-start gap-2 text-white">
-                        <label>Grade *</label>
-                        <input
-                            type="text"
-                            value={grade}
-                            onChange={(e) => setGrade(e.target.value)}
-                            required
-                            placeholder="Enter Grade"
-                            className="border-2 border-[#1d0c45] bg-[#14072F] rounded-xl w-[95%] p-2"
-                        />
-                    </div>
-
-                    <div className="flex flex-col w-full items-start gap-2 text-white">
-                        <label>Subject *</label>
-                        <input
-                            type="text"
-                            value={subject}
-                            onChange={(e) => setSubject(e.target.value)}
-                            required
-                            placeholder="Enter Subject"
-                            className="border-2 border-[#1d0c45] bg-[#14072F] rounded-xl w-[95%] p-2"
-                        />
-                    </div>
-
-                    <div className="flex flex-col w-full items-start gap-2 text-white">
-                        <label>Start Year *</label>
+                        <label>Joininy Date *</label>
                         <input
                             type="date"
-                            value={start ? `${start}-01-01` : ""}
-                            onChange={(e) => {
-                                const selectedDate = e.target.value;
-                                const onlyYear = selectedDate.split("-")[0];
-                                setStart(onlyYear)
-                            }}
+                            value={joiningDate || ""}
+                            onChange={(e) => setJoiningDate(e.target.value)}
                             required
                             className="border-2 border-[#1d0c45] bg-[#14072F] rounded-xl w-[95%] p-2"
                         />
                     </div>
 
                     <div className="flex flex-col w-full items-start gap-2 text-white">
-                        <label>End Year *</label>
+                        <label>Leaving Date *</label>
                         <input
                             type="date"
-                            value={end ? `${end}-01-01` : ""}
-                            onChange={(e) => {
-                                const selectedDate = e.target.value;
-                                const onlyYear = selectedDate.split("-")[0];
-                                setEnd(onlyYear)
-                            }}
+                            value={leavingDate || ""}
+                            onChange={(e) => setLeavingDate(e.target.value)}
                             required
                             className="border-2 border-[#1d0c45] bg-[#14072F] rounded-xl w-[95%] p-2"
                         />
@@ -378,17 +355,30 @@ function EducationForm({ flag, data }) {
                     />
                 </div>
 
-                <div className="w-[90%] flex items-center justify-end gap-4 mt-2">
-                    <button
-                        className="border-2 border-[#1d0c45] bg-[#14072F] rounded-xl py-2 px-3 text-white">
-                        Cancel
-                    </button>
-                    <label
-                        className="flex items-center gap-2 bg-gradient-to-r from-[#4C0FAF] via-[#8a47e7] to-[#ea61d1] rounded-xl py-2 px-3 text-white"
-                        onClick={education}>
-                        <FaBook />
-                        <p>Save Education</p>
+                <div className="w-[90%] flex items-center justify-between gap-4 mt-2">
+
+                    <label className="text-white flex gap-2">
+                        <p>Live</p>
+                        <input
+                            type="checkbox"
+                            checked={status}
+                            onChange={() => setStatus(prev => !prev)}
+                        />
                     </label>
+
+
+                    <div className="flex gap-2">
+                        <button
+                            className="border-2 border-[#1d0c45] bg-[#14072F] rounded-xl py-2 px-3 text-white">
+                            Cancel
+                        </button>
+                        <label
+                            className="flex items-center gap-2 bg-gradient-to-r from-[#4C0FAF] via-[#8a47e7] to-[#ea61d1] rounded-xl py-2 px-3 text-white"
+                            onClick={experience}>
+                            <FaBriefcase />
+                            <p>Save experience</p>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>

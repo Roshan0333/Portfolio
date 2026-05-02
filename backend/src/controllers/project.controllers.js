@@ -5,16 +5,29 @@ import ApiResponse from "../utils/api-response.js";
 import client from "../config/redis.config.js";
 
 const deleteProjectCacheByVersion = async (version) => {
-    const keys = [];
+    try {
+        if (!client || !client.isOpen) return;
 
-    for await (const key of client.scanIterator({
-        MATCH: `projects:v${version}:*`
-    })) {
-        keys.push(key);
-    }
+        const versionStr = String(version || "1");
+        const keys = [];
 
-    if (keys.length > 0) {
-        await client.del(keys);
+        for await (const key of client.scanIterator({
+            MATCH: `projects:v${versionStr}:*`
+        })) {
+            if (key) keys.push(key);
+        }
+
+        if (keys.length > 0) {
+            for (const key of keys) {
+                try {
+                    await client.del(key);
+                } catch (e) {
+                    console.error(`Failed to delete key ${key}:`, e.message);
+                }
+            }
+        }
+    } catch (err) {
+        console.error("Non-fatal Redis Error:", err.message);
     }
 };
 
@@ -32,15 +45,26 @@ const addProject = async (req, res) => {
             return res.status(400).json(new ApiError(400, "Project Image is Required"));
         }
 
-        const homeImageUpload = await cloudinary.uploader.upload(req.files[0].path, {
-            folder: "portfolio/projects"
-        });
+        const homeImageUpload = await new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                { folder: "portfolio/projects" },
+                (err, result) => {
+                    if (err) reject(err);
+                    else resolve(result.secure_url);
+                }
+            );
 
-        const homeImage = homeImageUpload.secure_url;
+            stream.end(req.files[0].buffer)
+        })
 
-        const sectionImageFiles = req.files.slice[1];
+        const homeImage = homeImageUpload;
+
+        const sectionImageFiles = req.files.slice(1);
 
         let parsedSection = [];
+        const sectionParasd = JSON.parse(section);
+
+        console.log(sectionParasd)
 
         if (section) {
             const sectionData = JSON.parse(section);
@@ -48,49 +72,56 @@ const addProject = async (req, res) => {
             parsedSection = await Promise.all(
                 sectionData.map(async (item, index) => {
                     let imageUrl = "";
+                    const currentFile = sectionImageFiles[index];
 
-                    if (sectionImageFiles[index]) {
-                        const upload = await cloudinary.uploader.upload(req.files[index].path, {
-                            folder: "portfolio/project/sections"
-                        });
+                    if (currentFile && currentFile.buffer) {
+                        imageUrl = await new Promise((resolve, reject) => {
+                            const stream = cloudinary.uploader.upload_stream(
+                                { folder: "portfolio/project/sections" },
+                                (err, result) => {
+                                    if (err) reject(err);
+                                    else resolve(result.secure_url)
+                                });
 
-                        imageUrl = upload.secure_url;
+                            stream.end(currentFile.buffer)
+                        })
                     }
 
                     return {
                         image: imageUrl,
-                        description: item.description
+                        description: sectionParasd[index]
                     }
                 })
             )
         }
 
-        const projectDetail = projectModel({
+        const socialMediaParsed = JSON.parse(socialMedia);
+        const technologyParsed = JSON.parse(technology);
+        const durationParsed = JSON.parse(durationTime);
+
+        const projectDetail = new projectModel({
             usedId: _id,
             projectName,
             homeImage,
-            technology,
-            durationTime,
+            technology: technologyParsed,
+            durationTime: { start: durationParsed.start, end: durationParsed.end },
             role,
             shortBrifing,
             description,
             section: parsedSection,
-            socialMedia,
+            socialMedia: socialMediaParsed,
             status,
             faviourate
         });
 
         await projectDetail.save();
 
-        const currentVersion = await client.get("projects:version") || 1;
-
-        await deleteProjectCacheByVersion(currentVersion);
-
+        const rawVersion = await client.get("projects:version");
+        const versionToClear = rawVersion ? String(rawVersion) : "1";
+        await deleteProjectCacheByVersion(versionToClear);
         await client.incr("projects:version");
 
         return res.status(200).json(new ApiResponse(200, projectDetail, "Project Add Successfully"));
-
-
     }
     catch (err) {
         return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));
@@ -116,7 +147,7 @@ const updateProject = async (req, res) => {
             return res.status(400).json(new ApiError(400, "Failed to Update Project Status."));
         }
 
-        const currentVersion = await client.get("projects:version")||1;
+        const currentVersion = await client.get("projects:version") || 1;
 
         await deleteProjectCacheByVersion(currentVersion);
 
@@ -139,7 +170,7 @@ const deleteProject = async (req, res) => {
 
         await projectModel.findByIdAndDelete(projectId);
 
-        const currentVersion = await client.get("projects:version")||1;
+        const currentVersion = await client.get("projects:version") || 1;
 
         await deleteProjectCacheByVersion(currentVersion);
 
@@ -187,24 +218,24 @@ const getProject = async (req, res) => {
     }
 }
 
-const getProjectById = async(req, res) => {
-    try{
-        const {projectId} = req.params;
+const getProjectById = async (req, res) => {
+    try {
+        const { projectId } = req.params;
 
-        if(!projectId){
+        if (!projectId) {
             return res.status(400).json(new ApiError(400, "Project Id is Required"));
         }
 
         const projectDetail = await projectModel.findById(projectId);
 
-        if(!projectDetail){
+        if (!projectDetail) {
             return res.status(404).json(new ApiError(404, "Project not found"));
         }
 
         return res.status(200).json(new ApiResponse(200, projectDetail, "Successfully"));
     }
-    catch(err){
-        return res.status(500).json(new ApiError(500, err.message, [{message: err.message, name: err.name}]))
+    catch (err) {
+        return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]))
     }
 }
 

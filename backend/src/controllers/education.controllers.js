@@ -28,9 +28,11 @@ const addEducation = async (req, res) => {
             return res.status(400).json(new ApiError(400, "Add Education is Failed"));
         }
 
+        await educationDetail.save();
+
         await client.del("Education");
 
-        return res.status(200).json(new ApiResponse(200, educationDetail, "Education Update Successfully"));
+        return res.status(200).json(new ApiResponse(200, educationDetail, "Education Add Successfully"));
     }
     catch (err) {
         return res.status(500).json(new ApiError(500, err.message, [{ message: err.message, name: err.name }]));

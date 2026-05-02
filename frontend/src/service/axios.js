@@ -14,6 +14,8 @@ export const postService = async (path, content, config = {}) => {
             }
         )
 
+        console.log(response)
+
         if (response.status === 200) {
             return { message: response.data.message, statusCode: response.status, data: response.data.data, fetchMessage: true, ok: true };
         }

@@ -8,9 +8,9 @@ const addCertificate = async (req, res) => {
     try {
         const { _id } = req.user;
 
-        const { name, date, status, description } = req.body;
+        const { name, date,description } = req.body;
 
-        if (!name || !date || !status) {
+        if (!name || !date) {
             return res.status(400).json(new ApiError(400, "All Field is Required"));
         }
 
@@ -18,17 +18,23 @@ const addCertificate = async (req, res) => {
             return res.status(400).json(new ApiError(400, "Certitifcate Image is Required"));
         }
 
-        const imageUploaded = await cloudinary.uploader.upload(req.file);
-
-        const image = imageUploaded.secure_url;
+        const image = await new Promise((resolve, reject) => {
+            const imageUpload = cloudinary.uploader.upload_stream(
+                {folder:"Certificate"},
+                (err, result) => {
+                    if(err) reject(err);
+                    else resolve(result.secure_url)
+                }
+            );
+            imageUpload.end(req.file.buffer);
+        })
 
         const certificateDetail = certificateModel({
             userId: _id,
             name,
             image,
             description,
-            date,
-            status
+            date
         });
 
         await certificateDetail.save();
