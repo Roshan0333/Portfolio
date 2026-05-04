@@ -48,7 +48,7 @@ const profileSchema = Schema({
         type: String
     },
     dob: {
-        type: Date
+        type: String
     },
     address: {
         street: { type: String },

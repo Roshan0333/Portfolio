@@ -1,50 +1,37 @@
 import ProfileImage from "../../assets/Roshan.webp"
 import { FaCamera, FaCloudUploadAlt, FaFileAlt, FaGithub, FaLinkedin, FaTimes } from "react-icons/fa";
 import SkillCard from "../../cards/skillsCard";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import defaultImage from "../../assets/default.webp";
 import { patchService, postService, putService } from "../../service/axios.js"
+import { useDispatch } from "react-redux";
+import { fetchProfile } from "../../redux/thunk.js";
 
 function Profile() {
 
-    const skillsCardList = [
-        {
-            category: "Frontend",
-            items: [
-                { name: "React.js" },
-                { name: "Tailwind CSS" },
-                { name: "HTML5" },
-                { name: "CSS3" }
-            ]
-        },
-        {
-            category: "Backend",
-            items: [
-                { name: "Node.js" },
-                { name: "Express.js" },
-                { name: "MongoDB" },
-                { name: "REST API" }
-            ]
-        }
-    ];
+    let dispatch = useDispatch();
+
+    const [skillsCardList, setSkillsCardList] = useState([]);
+    const [mediaList, setMediaList] = useState([])
 
     const fileRef = useRef();
 
-    const [name, setName] = useState("Roshan Ansari")
-    const [email, setEmail] = useState("ra786roshanansari@gmail.com");
-    const [phone, setPhone] = useState("8076521230");
-    const [profession, setProfession] = useState("Mern Stack Developer");
-    const [dob, setDob] = useState();
-    const [address, setAddress] = useState("Faridabad");
-    const [city, setCity] = useState("Faridabad");
-    const [country, setCountry] = useState("India");
-    const [pinCode, setPinCode] = useState("121003");
+    const [name, setName] = useState("")
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [profession, setProfession] = useState("");
+    const [dob, setDob] = useState("");
+    const [address, setAddress] = useState("");
+    const [city, setCity] = useState("");
+    const [country, setCountry] = useState("");
+    const [pinCode, setPinCode] = useState("");
     const [intro, setIntro] = useState("");
 
     const [selectImage, setSelectImage] = useState(null);
-    const [file, setFile] = useState(null);
+    const [file, setFile] = useState("");
 
-    const [resumeName, setResumeName] = useState(null);
+    const [resumeName, setResumeName] = useState("");
+    const [oldResume, setOldResume] = useState("")
 
 
     const [editFlag, setEditFlag] = useState(false);
@@ -64,6 +51,40 @@ function Profile() {
         fileRef.current.click();
     }
 
+    const handleSkillList = (category, file, name) => {
+        const index = skillsCardList.findIndex(obj => obj.category === category);
+        console.log(index);
+        console.log(skillsCardList)
+
+        if (index !== -1) {
+            const updatedSkills = [...skillsCardList];
+
+            updatedSkills[index].item.push({ icon: URL.createObjectURL(file), name: name })
+
+            setSkillsCardList(updatedSkills);
+        }
+        else {
+            const newCategory = {
+                category: category,
+                item: [{ icon: URL.createObjectURL(file), name: name }]
+            };
+            setSkillsCardList([...skillsCardList, newCategory]);
+        }
+    }
+
+    const handleMediaList = (file, name, link) => {
+        const updatedMedia = [
+            ...mediaList,
+            {
+                icon: URL.createObjectURL(file),
+                name: name,
+                link: link
+            }
+        ];
+
+        setMediaList(updatedMedia);
+    }
+
     const handleChange = (e) => {
         const selectedFile = e.target.files[0];
 
@@ -75,37 +96,37 @@ function Profile() {
     }
 
     const uploadResume = async (e) => {
-        try{
-         const selectedFile = e.target.files[0];
+        try {
+            const selectedFile = e.target.files[0];
 
-        if (selectedFile) {
-            setResumeName(selectedFile.name);
+            if (selectedFile) {
+                setResumeName(selectedFile.name);
 
-            const formData = new FormData();
+                const formData = new FormData();
 
-            formData.append("Resume", selectedFile);
+                formData.append("Resume", selectedFile);
 
-            const res = await putService(
-                "/portfolio/profile/uploadResume",
-                formData,
-                {
-                    headers:{
-                        "Content-Type":"multipart/form-data"
+                const res = await putService(
+                    "/portfolio/profile/uploadResume",
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
                     }
+                );
+
+                console.log(res);
+
+                if (res.fetchMessage) {
+                    alert(res.message)
                 }
-            );
-
-            console.log(res);
-
-            if(res.fetchMessage){
-                alert(res.message)
+                else {
+                    console.log(res.message)
+                }
             }
-            else{
-                console.log(res.message)
-            }
-        }   
         }
-        catch(err){
+        catch (err) {
             console.log(err.message)
         }
     }
@@ -122,12 +143,12 @@ function Profile() {
             formData.append("introduction", intro);
             formData.append("dob", dob);
             formData.append("ProfileImage", file);
-            formData.append("addressObject", {
+            formData.append("addressObject", JSON.stringify({
                 street: address,
                 pincode: pinCode,
                 city: city,
                 country: country
-            });
+            }));
 
             const res = await postService(
                 "/portfolio/profile/create",
@@ -139,7 +160,7 @@ function Profile() {
                 });
 
             if (res.fetchMessage) {
-                alert(res.message)               
+                alert(res.message)
             } else {
                 console.log(res.message);
             }
@@ -149,6 +170,44 @@ function Profile() {
         }
     }
 
+    useEffect(() => {
+        ; (
+            async () => {
+                try {
+                    const result = await dispatch(fetchProfile()).unwrap();
+
+                    const profileData = result[0];
+                    console.log(profileData)
+
+                    if (profileData) {
+                        setName(profileData.name || "");
+                        setEmail(profileData.email || "");
+                        setPhone(profileData.contact ? String(profileData.contact) : "");
+                        setProfession(profileData.profession || "");
+                        setDob(
+                            profileData.dob && profileData.dob !== "undefined"
+                                ? profileData.dob.split("T")[0]
+                                : ""
+                        );
+                        setAddress(profileData.addressObject?.street || "");
+                        setCity(profileData.addressObject?.city || "");
+                        setCountry(profileData.addressObject?.country || "");
+                        setPinCode(profileData.addressObject?.pincode || "");
+                        setIntro(profileData.introduction || "");
+
+                        setSelectImage(profileData.profileImage || null);
+
+                        setSkillsCardList(profileData.skill || []);
+                        setMediaList(profileData.socialMediaLink || []);
+                        setOldResume(profileData.resume || "")
+                    }
+                }
+                catch (err) {
+                    console.log(err.message)
+                }
+            }
+        )()
+    }, [dispatch])
 
     return (
         <div className="w-full md:min-h-screen  flex flex-col md:flex-row mr-2 hide-scrollbar md:border-2 md:rounded-2xl border-[#4815ad] shadow-[0_0_10px_#5520b7] py-2 px-2 gap-2">
@@ -156,8 +215,8 @@ function Profile() {
             {(skillFlag || mediaFlag) && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center backdrop-blur-sm bg-black/30">
 
-                    {skillFlag && <SkillForm flag={changeSkillFlag} />}
-                    {mediaFlag && <MediaForm flag={changeMediaFlag} />}
+                    {skillFlag && <SkillForm flag={changeSkillFlag} list={handleSkillList} />}
+                    {mediaFlag && <MediaForm flag={changeMediaFlag} list={handleMediaList} />}
 
                 </div>
             )}
@@ -181,24 +240,24 @@ function Profile() {
                 </div>
 
 
-                <div className="flex justify-center items-center gap-2 w-[50%] rounded-2xl bg-gradient-to-r from-[#3f118f] to-[#A78BFA] py-1">
-                    <label className="cursor-pointer flex items-center gap-1">
+                <div className="flex justify-center items-center gap-2 w-[50%] rounded-2xl bg-gradient-to-r from-[#3f118f] to-[#A78BFA] py-1 px-2 md:px-1">
+                    <label className="w-full cursor-pointer flex items-center gap-1 truncate">
                         <input
                             type="file"
                             accept="application/pdf"
                             className="hidden"
-                            ref = {fileRef}
+                            ref={fileRef}
                             onChange={(e) => uploadResume(e)}
                         />
                         <FaCloudUploadAlt color="#ffffff" />
-                        <p className="text-white">{(resumeName === null)?"Upload New Resume":resumeName}</p>
+                        <p className="text-white w-[80%] truncate">{(resumeName === "") ? "Upload New Resume" : resumeName}</p>
                     </label>
                 </div>
 
-                <div className="flex justify-center items-center gap-2 w-[50%] rounded-2xl bg-gradient-to-r from-[#3f118f] to-[#A78BFA] py-1">
+                {(oldResume !== "") && <div className="flex justify-center items-center gap-2 w-[50%] rounded-2xl bg-gradient-to-r from-[#3f118f] to-[#A78BFA] py-1">
                     <FaFileAlt color="#ffffff" />
-                    <p className="text-white">Resume.pdf</p>
-                </div>
+                    <p className="text-white">{oldResume ? oldResume.split("/").pop() : "No Resume"}</p>
+                </div>}
 
                 <div className="w-full bg-[#14072F] px-3 py-4 rounded-2xl">
                     <div className="w-full flex justify-between items-center">
@@ -206,18 +265,14 @@ function Profile() {
                         <p className="px-3 py-2 text-center text-white bg-gradient-to-r from-[#3f118f] to-[#A78BFA] rounded-2xl hover:cursor-pointer" onClick={changeSkillFlag}>+ Add Skill</p>
                     </div>
 
-                    {/* {skillsCardList.map((item, index) => {
-                        return <SkillCard skills={item} key={index}/>
-                    })} */}
-
-                    <div className="flex flex-col justify-between items-center gap-2 mt-2">
+                    <div className="flex flex-col justify-between items-center gap-2 mt-2 max-h-50 overflow-auto">
                         {skillsCardList.map((skillArray, index) => {
                             return <div key={index} className="flex flex-col w-full gap-1 justify-center items-center bg-[#5520b7] py-3 px-2 rounded-2xl">
                                 <p className="text-[20px] text-white">{skillArray.category}</p>
                                 <div className="grid gap-3 w-full justify-center [grid-template-columns:repeat(auto-fit,minmax(100px,max-content))]">
                                     {skillArray.items.map((skill, index) => {
                                         return <div key={index} className="flex justify-center items-center p-2 bg-[#14072F] rounded-xl">
-                                            <img src={defaultImage} alt="icon" className="h-5 w-5 md:h-7 md:w-7  object-contain" />
+                                            <img src={skill.icon} alt="icon" className="h-5 w-5 md:h-7 md:w-7  object-contain rounded-lg" />
                                             <p className="text-white text-[15px]">{skill.name}</p>
                                         </div>
                                     })}
@@ -235,18 +290,16 @@ function Profile() {
 
                     {/*Social Media Link Add Map after api intergation*/}
 
-                    <div className="flex flex-col gap-1 w-[90%] justify-center items-center bg-[#5520b7] py-3 px-2 rounded-2xl">
+                    {(mediaList.length !== 0) && <div className="flex flex-col gap-1 w-[90%] justify-center items-center bg-[#5520b7] py-3 px-2 rounded-2xl">
                         <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                            <div className="flex justify-center items-center gap-1 bg-[#14072F] p-2 rounded-xl">
-                                <FaGithub color="#ffffff" />
-                                <p className="text-white text-[15px]">Github</p>
-                            </div>
-                            <div className=" flex justify-center items-center gap-1 bg-[#14072F] p-2 rounded-xl">
-                                <FaLinkedin color="#0A66C2" />
-                                <p className="text-white text-[15px]">Linkedin</p>
-                            </div>
+                            {mediaList.map((media, index) => {
+                                return <div className="flex justify-center items-center gap-1 bg-[#14072F] p-2 rounded-xl">
+                                    <img className="h-5 w-5 md:h-7 md:w-7  object-contain rounded-lg" src={media.icon} color="#ffffff" />
+                                    <p className="text-white text-[15px]">{media.name}</p>
+                                </div>
+                            })}
                         </div>
-                    </div>
+                    </div>}
                 </div>
 
                 <button className="w-full px-3 py-2 md:w-[30%] border-2 rounded-3xl border-x-4 border-[#b329cb] border-x-[#b329cb] bg-[#14072F] text-white shadow-[0_0_10px_#b329cb]"
@@ -424,14 +477,14 @@ function Profile() {
     )
 }
 
-function SkillForm({ flag }) {
+function SkillForm({ flag, list }) {
 
     const fileRef = useRef();
 
     const [categoryName, setCategory] = useState("");
     const [skillName, setSkillName] = useState("");
 
-    const [file, setFile] = useState(null);
+    const [file, setFile] = useState("");
 
     const handleImage = (e) => {
         const iconFile = e.target.files[0];
@@ -459,11 +512,12 @@ function SkillForm({ flag }) {
                 }
             );
 
-            if(res.statusCode === 200){
+            if (res.statusCode === 200) {
                 flag()
+                list(categoryName, file, skillName)
                 setCategory("");
                 setSkillName("");
-                setFile(null);
+                setFile("");
                 return
             }
 
@@ -535,14 +589,14 @@ function SkillForm({ flag }) {
     )
 }
 
-function MediaForm({ flag }) {
+function MediaForm({ flag, list }) {
 
     const fileRef = useRef();
 
     const [mediaName, setMedia] = useState("");
     const [mediaLink, setMediaLink] = useState("");
 
-    const [file, setFile] = useState(null);
+    const [file, setFile] = useState("");
 
     const handleIcon = (e) => {
         const iconFile = e.target.files[0];
@@ -571,11 +625,12 @@ function MediaForm({ flag }) {
                 }
             );
 
-            if(res.statusCode === 200){
+            if (res.statusCode === 200) {
                 flag();
+                list(file, mediaName, mediaLink);
                 setMedia("");
                 setMediaLink("");
-                setFile(null);
+                setFile("");
                 return
             }
 

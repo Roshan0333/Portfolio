@@ -1005,23 +1005,23 @@ function ProjectForm({ flag }) {
                 <div className="space-y-6">
 
 
-                    <div className="bg-[#0B0618] border border-violet-500/20 rounded-xl p-6">
+                    <div className="w-full bg-[#0B0618] border border-violet-500/20 rounded-xl p-6">
                         <h2 className="text-lg font-semibold mb-4">Project Sections</h2>
 
-                        <div className="space-y-4 h-80 overflow-y-scroll">
+                        <div className="w-full space-y-4 h-80 overflow-y-scroll">
                             {projectSection.map((section, index) => (
                                 <div
                                     key={index}
-                                    className="border border-violet-500/20 rounded-lg p-4 flex flex-col items-center md:flex-row gap-4"
+                                    className="w-full border border-violet-500/20 rounded-lg p-4 flex flex-col items-center md:flex-row gap-4"
                                 >
                                     {/* Section Image */}
-                                    <div className="flex flex-col gap-1">
+                                    <div className="flex flex-col gap-1 w-full md:w-[25%]">
                                         <p className="text-sm mb-2">Section Image</p>
                                         <label className="cursor-pointer">
                                             <img
                                                 src={section.image ? URL.createObjectURL(section.image) : demo}
                                                 alt=""
-                                                className="w-32 h-20 object-cover rounded-lg"
+                                                className="md:w-32 h-20 w-full object-cover rounded-lg"
                                             />
 
                                             <input
@@ -1034,7 +1034,7 @@ function ProjectForm({ flag }) {
                                     </div>
 
                                     {/* Description */}
-                                    <div className="flex-1 flex flex-col gap-1">
+                                    <div className="flex-1 flex flex-col gap-1 w-full md:flex-1">
                                         <p className="text-sm mb-2">Description</p>
                                         <textarea
                                             rows="3"

@@ -3,6 +3,6 @@ import {profileSlice} from "./slice.js";
 
 export const store = configureStore({
     reducer: {
-        profile: profileSlice
+        profile: profileSlice.reducer
     }
 })

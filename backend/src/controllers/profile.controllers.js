@@ -48,6 +48,8 @@ const createProfile = async (req, res) => {
         });
 
         await userDetail.save();
+        await client.del("Profile")
+
 
         return res.status(200).json(new ApiResponse(200, userDetail, "Profile Create Successfully"));
     }
@@ -133,9 +135,6 @@ const addSkills = async (req, res) => {
 
         const { skill, category } = req.body;
 
-        console.log(req.body)
-
-
         if (!req.file) {
             return res.status(400).json(new ApiError(400, "Skill Icon or Image is Required."));
         }
@@ -178,7 +177,7 @@ const addSkills = async (req, res) => {
                         "skill.$.items": skillObject
                     }
                 },
-                { new: true }
+                { returnDocument: 'after' }
             )
         }
         else {
@@ -192,7 +191,7 @@ const addSkills = async (req, res) => {
                         }
                     }
                 },
-                { new: true }
+                { returnDocument: 'after' }
             )
         }
 
@@ -204,6 +203,7 @@ const addSkills = async (req, res) => {
             return res.status(400).json(new ApiError(400, "Profile Updatation Failed"));
         }
 
+        await client.del("Profile")
         return res.status(200).json(new ApiResponse(200, profileDetails, "Successful"))
 
     }
@@ -236,7 +236,7 @@ const deleteSkills = async (req, res) => {
             },
             {
                 arrayFilters: [{ "elem.category": category }],
-                new: true
+                returnDocument: 'after'
             }
         );
 
@@ -244,6 +244,7 @@ const deleteSkills = async (req, res) => {
             return res.status(404).json(new ApiError(404, "Skill Remove is Failed"));
         }
 
+        await client.del("Profile")
         return res.status(200).json(new ApiResponse(200, profileDetails, "Skill set updated successfully."));
     }
     catch (err) {
@@ -289,9 +290,10 @@ const uploadResume = async (req, res) => {
         await profileModel.findOneAndUpdate(
             { userId: _id },
             { resume: publicUrl.publicUrl },
-            { new: true, upsert: true }
+            { returnDocument: 'after', upsert: true }
         )
 
+        await client.del("Profile")
         return res.status(200).json(new ApiResponse(200, "Resume Upload is Successfully"));
     }
     catch (err) {
@@ -347,6 +349,7 @@ const addSocialMedia = async (req, res) => {
             return res.status(404).json(new ApiError(404, "Social Media Link is Adding Failed."));
         }
 
+        await client.del("Profile")
         return res.status(200).json(new ApiResponse(200, profileDetails, "Social Media is Add Successfully."));
 
     }
@@ -374,13 +377,14 @@ const deleteSocialMedia = async (req, res) => {
                     }
                 }
             },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!profileDetails) {
             return res.status(404).json(new ApiError(404, "Media link is not remove."))
         }
 
+        await client.del("Profile")
         return res.status(200).json(new ApiResponse(200, profileDetails, "Successful"));
     }
     catch (err) {

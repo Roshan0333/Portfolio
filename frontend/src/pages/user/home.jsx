@@ -3,15 +3,26 @@ import { motion } from "framer-motion";
 import { FaLinkedin, FaGithub } from "react-icons/fa"
 import SkillCard from "../../cards/skillsCard";
 import { fetchProfile } from "../../redux/thunk";
-import {useEffect, useState} from "react";
-import { useDispatch } from "react-redux";  
+import { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 
 function Home() {
 
     const dispatch = useDispatch();
 
+    const [name, setName] = useState("");
+    const [profession, setProfession] = useState("");
+    const [intro, setIntro] = useState("");
+    const [profileImage, setProfileImage] = useState(null);
+    const [resume, setResume] = useState(null);
+    const [media, setMedia] = useState([]);
+    const [skillsCardList, setSkillsCardList] = useState([])
+
     const [loading, setLoading] = useState(false);
-     const [error, setError] = useState(false)
+    const [error, setError] = useState(false)
+
+    const [open, setOpen] = useState(false);
+    const menuRef = useRef(null);
 
     const skills = [
         "React.js",
@@ -37,27 +48,6 @@ function Home() {
         "VS Code",
     ];
 
-    const skillsCardList = [
-        {
-            category: "Frontend",
-            items: [
-                { name: "React.js" },
-                { name: "Tailwind CSS" },
-                { name: "HTML5" },
-                { name: "CSS3" }
-            ]
-        },
-        {
-            category: "Backend",
-            items: [
-                { name: "Node.js" },
-                { name: "Express.js" },
-                { name: "MongoDB" },
-                { name: "REST API" }
-            ]
-        }
-    ];
-
     const cardVariant = {
         hidden: {
             opacity: 0,
@@ -73,35 +63,118 @@ function Home() {
         }
     };
 
-    useEffect(() => {
-        dispatch(fetchProfile());
 
-        console.log(dispatch(fetchProfile()));
+    const handleView = () => {
+        if (!resume) return;
+        window.open(resume, "_blank");
+        setOpen(false);
+    }
+
+    const handleDownload = async () => {
+        if (!resume) return;
+        
+        const response = await fetch(resume);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Roshan";
+        a.click();
+        URL.revokeObjectURL(url);
+        setOpen(false)
+    };
+
+    useEffect(() => {
+        const handleClickOutSide = (e) => {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setOpen(false)
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutSide);
+        return () => document.removeEventListener("mousedown", handleClickOutSide);
+    }, [])
+
+    useEffect(() => {
+        ; (async () => {
+            try {
+                const result = await dispatch(fetchProfile()).unwrap();
+
+                const profileData = result[0];
+
+                if (profileData) {
+                    setName(profileData.name || "");
+                    setProfession(profileData.profession || "");
+                    setIntro(profileData.introduction || "");
+                    setProfileImage(profileData.profileImage || "");
+                    setMedia(profileData.socialMediaLink || []);
+                    setSkillsCardList(profileData.skill || []);
+                    setResume(profileData.resume || null);
+                }
+
+            } catch (err) {
+                console.log(err.message)
+            }
+        })()
     }, [dispatch]);
 
     if (loading) return <h2>Loading...</h2>;
     if (error) return <h2>{error}</h2>;
 
     return (
-        <div className="h-full max-w-full overflow-x-hidden">
+        <div className="h-full max-w-full overflow-x-hidden hide-scrollbar">
             <div className="max-w-full flex flex-col-reverse md:flex-row justify-around">
                 <div className="flex-1 h-100 flex flex-col justify-center items-center text-start mx-5 mt-10">
                     <span
                         className="text-5xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-                        Roshan Ansari
+                        {name}
                     </span>
-                    <span className="text-5xl font-bold text-center pb-5 text-[#60A5FA] mt-3">MERN Stack Developer</span>
-                    <p className="text-[#D1D5DB] text-center">I’m Roshan Ansari, a MERN Stack Developer passionate about building smart
-                        and innovative applications.
-                        I have worked on projects like a Movie Recommendation System
-                        and AI-based solutions, focusing on performance, scalability,
-                        and user experience.</p>
+                    <span className="text-5xl font-bold text-center pb-5 text-[#60A5FA] mt-3">{profession}</span>
+                    <p className="text-[#D1D5DB] text-center">{intro}</p>
 
                     <div className="flex mt-5">
-                        <FaLinkedin color="#0A66C2" size={30} className="mr-6 cursor-pointer" />
-                        <FaGithub size={30} className="mr-6 cursor-pointer" />
-                        <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-5 py-2 rounded-full cursor-pointer hover:opacity-90 transition">
-                            <p>Resume</p>
+                        {media.map((item, index) => {
+                            if (item.name === "Github") {
+                                return <a href={item.link}><FaGithub size={30} className="mr-6 cursor-pointer" /></a>
+                            }
+                            else if (item.name === "Linkedin") {
+                                return <a href={item.link}><FaLinkedin color="#0A66C2" size={30} className="mr-6 cursor-pointer" /></a>
+                            }
+                        })}
+                        <div className="relative" ref={menuRef}>
+
+                            {/* Your existing button style — just replaced <a> with button */}
+                            <button
+                                onClick={() => resume && setOpen(!open)}
+                                className={`bg-gradient-to-r from-blue-500 to-purple-500 text-white px-5 py-2 rounded-full transition
+          ${!resume ? "opacity-40 cursor-not-allowed" : "hover:opacity-90 cursor-pointer"}`}
+                            >
+                                Resume
+                            </button>
+
+                            {/* Dropdown */}
+                            {open && (
+                                <div className="absolute top-full mt-2 left-0 bg-[#14072F] border border-white/10 rounded-xl shadow-xl overflow-hidden z-50 min-w-[150px]">
+
+                                    <button
+                                        onClick={handleView}
+                                        className="flex items-center gap-3 w-full px-4 py-3 text-sm text-white hover:bg-white/10 transition"
+                                    >
+                                        👁️ View
+                                    </button>
+
+                                    <div className="h-px bg-white/10" />
+
+                                    <button
+                                        onClick={handleDownload}
+                                        className="flex items-center gap-3 w-full px-4 py-3 text-sm text-white hover:bg-white/10 transition"
+                                    >
+                                        ⬇️ Download
+                                    </button>
+
+                                </div>
+                            )}
+
                         </div>
                     </div>
                 </div>
@@ -122,7 +195,7 @@ function Home() {
                         <div className="absolute inset-[10px] bg-gray-900 rounded-full" />
 
                         <img
-                            src={Roshan}
+                            src={profileImage ? profileImage : Roshan}
                             alt="Roshan"
                             className="absolute inset-[15px] w-[calc(100%-30px)] h-[calc(100%-30px)] object-cover rounded-full"
                         />
@@ -153,29 +226,33 @@ function Home() {
             </div>
 
             <motion.div
-                initial='hidden'
+                initial="hidden"
                 whileInView="visible"
                 viewport={{ once: false }}
                 variants={{
                     hidden: {},
                     visible: {
                         transition: {
-                            staggerChildren: 0.2
-                        }
-                    }
+                            staggerChildren: 0.2,
+                        },
+                    },
                 }}
-                className=" w-full grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mt-10 mb-4 px-4">
-                {skillsCardList.map((skill, index) => {
-                    return <motion.div
-                        key={index}
-                        variants={cardVariant}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: false, margin: "-50px" }}
-                    >
-                        <SkillCard skills={skill} key={index} />
-                    </motion.div>
-                })}
+                className="w-full gap-6 mt-10 mb-4 px-4 items-start"
+                style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}
+            >
+                {[...skillsCardList]
+                    .sort((a, b) => b.items.length - a.items.length)
+                    .map((skill, index) => (
+                        <motion.div
+                            key={index}
+                            variants={cardVariant}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: false, margin: "-50px" }}
+                        >
+                            <SkillCard skills={skill} />
+                        </motion.div>
+                    ))}
             </motion.div>
         </div>
     )
